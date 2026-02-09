@@ -1,523 +1,359 @@
-import React, { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2, Search, Phone, Mail, Car, TrendingUp, DollarSign, Activity, Zap, RefreshCw, Calendar, AlertCircle, CheckCircle2, Clock, XCircle, Target } from 'lucide-react';
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BORUSAN OTOMOTİV Premium CRM</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
+        .animate-spin { animation: spin 1s linear infinite; }
+        .animate-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
 
-const BorusanCRM = () => {
-  const [customers, setCustomers] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterStatus, setFilterStatus] = useState('all');
-  const [showForm, setShowForm] = useState(false);
-  const [editingId, setEditingId] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [lastSync, setLastSync] = useState(null);
-  const [formData, setFormData] = useState({
-    name: '',
-    phone: '',
-    email: '',
-    carModel: '',
-    status: 'İlk Temas',
-    price: '',
-    dbsAmount: '',
-    notes: ''
-  });
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        const { Plus, Edit2, Trash2, Search, Phone, Mail, Car, TrendingUp, DollarSign, Activity, Zap, RefreshCw, AlertCircle, CheckCircle2, Clock, XCircle, Target } = lucide;
 
-  useEffect(() => {
-    loadData();
-    const interval = setInterval(loadData, 5000); // Her 5 saniyede otomatik yenile
-    return () => clearInterval(interval);
-  }, []);
+        const STORAGE_KEY = 'borusan-otomotiv-crm-data';
 
-  const loadData = async () => {
-    setLoading(true);
-    try {
-      const result = await window.storage.get('borusan-otomotiv-crm', true);
-      if (result && result.value) {
-        setCustomers(JSON.parse(result.value));
-      }
-      setLastSync(new Date().toLocaleTimeString('tr-TR'));
-    } catch (error) {
-      console.log('İlk kullanım veya veri yükleme hatası');
-    } finally {
-      setLoading(false);
-    }
-  };
+        function BorusanCRM() {
+            const [customers, setCustomers] = useState([]);
+            const [searchTerm, setSearchTerm] = useState('');
+            const [filterStatus, setFilterStatus] = useState('all');
+            const [showForm, setShowForm] = useState(false);
+            const [editingId, setEditingId] = useState(null);
+            const [loading, setLoading] = useState(false);
+            const [lastSync, setLastSync] = useState(null);
+            const [formData, setFormData] = useState({
+                name: '', phone: '', email: '', carModel: '',
+                status: 'İlk Temas', price: '', dbsAmount: '', notes: ''
+            });
 
-  const saveData = async (data) => {
-    setLoading(true);
-    try {
-      await window.storage.set('borusan-otomotiv-crm', JSON.stringify(data), true);
-      setLastSync(new Date().toLocaleTimeString('tr-TR'));
-    } catch (error) {
-      alert('Veri kaydedilemedi! Lütfen tekrar deneyin.');
-    } finally {
-      setLoading(false);
-    }
-  };
+            useEffect(() => {
+                loadData();
+                const interval = setInterval(loadData, 5000);
+                return () => clearInterval(interval);
+            }, []);
 
-  const statusOptions = [
-    'İlk Temas',
-    'Scoring Yapıldı',
-    'Teklif Gönderildi',
-    'Görüşme Yapıldı',
-    'Onay Bekleniyor',
-    'Rezervasyon Yapıldı',
-    'Teslim Edildi',
-    'İptal',
-    'Tamamlandı'
-  ];
+            const loadData = () => {
+                setLoading(true);
+                try {
+                    const data = localStorage.getItem(STORAGE_KEY);
+                    if (data) setCustomers(JSON.parse(data));
+                    setLastSync(new Date().toLocaleTimeString('tr-TR'));
+                } catch (error) {
+                    console.error('Veri yüklenemedi');
+                } finally {
+                    setLoading(false);
+                }
+            };
 
-  const statusConfig = {
-    'İlk Temas': { color: 'bg-blue-500', icon: Phone, bgLight: 'bg-blue-50', textColor: 'text-blue-700' },
-    'Scoring Yapıldı': { color: 'bg-indigo-500', icon: Target, bgLight: 'bg-indigo-50', textColor: 'text-indigo-700' },
-    'Teklif Gönderildi': { color: 'bg-purple-500', icon: Mail, bgLight: 'bg-purple-50', textColor: 'text-purple-700' },
-    'Görüşme Yapıldı': { color: 'bg-yellow-500', icon: Clock, bgLight: 'bg-yellow-50', textColor: 'text-yellow-700' },
-    'Onay Bekleniyor': { color: 'bg-orange-500', icon: AlertCircle, bgLight: 'bg-orange-50', textColor: 'text-orange-700' },
-    'Rezervasyon Yapıldı': { color: 'bg-green-500', icon: CheckCircle2, bgLight: 'bg-green-50', textColor: 'text-green-700' },
-    'Teslim Edildi': { color: 'bg-teal-500', icon: Car, bgLight: 'bg-teal-50', textColor: 'text-teal-700' },
-    'İptal': { color: 'bg-red-500', icon: XCircle, bgLight: 'bg-red-50', textColor: 'text-red-700' },
-    'Tamamlandı': { color: 'bg-gray-500', icon: CheckCircle2, bgLight: 'bg-gray-50', textColor: 'text-gray-700' }
-  };
+            const saveData = (data) => {
+                try {
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+                    setLastSync(new Date().toLocaleTimeString('tr-TR'));
+                } catch (error) {
+                    alert('Veri kaydedilemedi!');
+                }
+            };
 
-  const handleSubmit = () => {
-    if (!formData.name || !formData.phone || !formData.carModel) {
-      alert('⚠️ Müşteri Adı, Telefon ve Araç Modeli zorunludur!');
-      return;
-    }
+            const statusOptions = ['İlk Temas', 'Scoring Yapıldı', 'Teklif Gönderildi', 'Görüşme Yapıldı', 'Onay Bekleniyor', 'Rezervasyon Yapıldı', 'Teslim Edildi', 'İptal', 'Tamamlandı'];
 
-    const timestamp = new Date().toISOString();
-    const newCustomers = editingId
-      ? customers.map(c => c.id === editingId ? { ...formData, id: editingId, updatedAt: timestamp } : c)
-      : [...customers, { ...formData, id: Date.now(), createdAt: timestamp, updatedAt: timestamp }];
-    
-    setCustomers(newCustomers);
-    saveData(newCustomers);
-    resetForm();
-  };
+            const statusConfig = {
+                'İlk Temas': { bgLight: 'bg-blue-50', textColor: 'text-blue-700' },
+                'Scoring Yapıldı': { bgLight: 'bg-indigo-50', textColor: 'text-indigo-700' },
+                'Teklif Gönderildi': { bgLight: 'bg-purple-50', textColor: 'text-purple-700' },
+                'Görüşme Yapıldı': { bgLight: 'bg-yellow-50', textColor: 'text-yellow-700' },
+                'Onay Bekleniyor': { bgLight: 'bg-orange-50', textColor: 'text-orange-700' },
+                'Rezervasyon Yapıldı': { bgLight: 'bg-green-50', textColor: 'text-green-700' },
+                'Teslim Edildi': { bgLight: 'bg-teal-50', textColor: 'text-teal-700' },
+                'İptal': { bgLight: 'bg-red-50', textColor: 'text-red-700' },
+                'Tamamlandı': { bgLight: 'bg-gray-50', textColor: 'text-gray-700' }
+            };
 
-  const handleEdit = (customer) => {
-    setFormData(customer);
-    setEditingId(customer.id);
-    setShowForm(true);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+            const handleSubmit = () => {
+                if (!formData.name || !formData.phone || !formData.carModel) {
+                    alert('⚠️ Müşteri Adı, Telefon ve Araç Modeli zorunludur!');
+                    return;
+                }
+                const timestamp = new Date().toISOString();
+                const newCustomers = editingId
+                    ? customers.map(c => c.id === editingId ? { ...formData, id: editingId, updatedAt: timestamp } : c)
+                    : [...customers, { ...formData, id: Date.now(), createdAt: timestamp, updatedAt: timestamp }];
+                setCustomers(newCustomers);
+                saveData(newCustomers);
+                resetForm();
+            };
 
-  const handleDelete = (id) => {
-    if (window.confirm('🗑️ Bu müşteriyi silmek istediğinizden emin misiniz?')) {
-      const newCustomers = customers.filter(c => c.id !== id);
-      setCustomers(newCustomers);
-      saveData(newCustomers);
-    }
-  };
+            const handleEdit = (customer) => {
+                setFormData(customer);
+                setEditingId(customer.id);
+                setShowForm(true);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            };
 
-  const resetForm = () => {
-    setFormData({
-      name: '',
-      phone: '',
-      email: '',
-      carModel: '',
-      status: 'İlk Temas',
-      price: '',
-      dbsAmount: '',
-      notes: ''
-    });
-    setEditingId(null);
-    setShowForm(false);
-  };
+            const handleDelete = (id) => {
+                if (window.confirm('🗑️ Bu müşteriyi silmek istediğinizden emin misiniz?')) {
+                    const newCustomers = customers.filter(c => c.id !== id);
+                    setCustomers(newCustomers);
+                    saveData(newCustomers);
+                }
+            };
 
-  const filteredCustomers = customers.filter(customer => {
-    const matchesSearch = customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         customer.phone.includes(searchTerm) ||
-                         customer.carModel.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesFilter = filterStatus === 'all' || customer.status === filterStatus;
-    return matchesSearch && matchesFilter;
-  });
+            const resetForm = () => {
+                setFormData({ name: '', phone: '', email: '', carModel: '', status: 'İlk Temas', price: '', dbsAmount: '', notes: '' });
+                setEditingId(null);
+                setShowForm(false);
+            };
 
-  const totalRevenue = customers
-    .filter(c => c.price)
-    .reduce((sum, c) => sum + (parseFloat(c.price.replace(/[^0-9.-]/g, '')) || 0), 0);
+            const filteredCustomers = customers.filter(customer => {
+                const matchesSearch = customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    customer.phone.includes(searchTerm) ||
+                    customer.carModel.toLowerCase().includes(searchTerm.toLowerCase());
+                const matchesFilter = filterStatus === 'all' || customer.status === filterStatus;
+                return matchesSearch && matchesFilter;
+            });
 
-  const totalDBS = customers
-    .filter(c => c.dbsAmount)
-    .reduce((sum, c) => sum + (parseFloat(c.dbsAmount.replace(/[^0-9.-]/g, '')) || 0), 0);
+            const totalRevenue = customers.filter(c => c.price).reduce((sum, c) => sum + (parseFloat(c.price.replace(/[^0-9.-]/g, '')) || 0), 0);
+            const totalDBS = customers.filter(c => c.dbsAmount).reduce((sum, c) => sum + (parseFloat(c.dbsAmount.replace(/[^0-9.-]/g, '')) || 0), 0);
 
-  const StatusIcon = ({ status }) => {
-    const Icon = statusConfig[status]?.icon || Phone;
-    return <Icon className="w-4 h-4" />;
-  };
+            return (
+                <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6">
+                    <div className="max-w-7xl mx-auto">
+                        <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl shadow-2xl p-8 mb-6 relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full -mr-32 -mt-32"></div>
+                            <div className="relative">
+                                <div className="flex items-center justify-between mb-6">
+                                    <div>
+                                        <div className="flex items-center gap-3 mb-2">
+                                            <Car size={40} className="text-white" />
+                                            <h1 className="text-4xl font-black text-white">BORUSAN OTOMOTİV</h1>
+                                        </div>
+                                        <p className="text-blue-100 text-lg font-medium ml-13">Premium Kiralama CRM</p>
+                                        <div className="flex items-center gap-2 mt-2 ml-13">
+                                            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                                            <span className="text-blue-100 text-sm">Canlı Senkronizasyon</span>
+                                            {lastSync && <span className="text-blue-200 text-xs ml-2">Son: {lastSync}</span>}
+                                        </div>
+                                    </div>
+                                    <div className="flex gap-3">
+                                        <button onClick={loadData} disabled={loading} className="flex items-center gap-2 bg-white/20 text-white px-5 py-3 rounded-xl hover:bg-white/30 transition-all">
+                                            <RefreshCw size={20} className={loading ? 'animate-spin' : ''} />
+                                            <span className="font-semibold">Yenile</span>
+                                        </button>
+                                        <button onClick={() => setShowForm(!showForm)} className="flex items-center gap-2 bg-white text-blue-600 px-6 py-3 rounded-xl hover:bg-blue-50 transition-all font-bold">
+                                            <Plus size={20} />
+                                            Yeni Müşteri
+                                        </button>
+                                    </div>
+                                </div>
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6">
-      <div className="max-w-7xl mx-auto">
-        {/* Premium Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl shadow-2xl p-8 mb-6 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full -mr-32 -mt-32"></div>
-          <div className="absolute bottom-0 left-0 w-48 h-48 bg-white opacity-5 rounded-full -ml-24 -mb-24"></div>
-          
-          <div className="relative">
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <div className="flex items-center gap-3 mb-2">
-                  <Car className="w-10 h-10 text-white" />
-                  <h1 className="text-4xl font-black text-white tracking-tight">
-                    BORUSAN OTOMOTİV
-                  </h1>
-                </div>
-                <p className="text-blue-100 text-lg font-medium ml-13">Premium Kiralama CRM</p>
-                <div className="flex items-center gap-2 mt-2 ml-13">
-                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                  <span className="text-blue-100 text-sm">Canlı Senkronizasyon</span>
-                  {lastSync && (
-                    <span className="text-blue-200 text-xs ml-2">Son: {lastSync}</span>
-                  )}
-                </div>
-              </div>
-              <div className="flex gap-3">
-                <button
-                  onClick={loadData}
-                  disabled={loading}
-                  className="flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white px-5 py-3 rounded-xl hover:bg-white/30 transition-all shadow-lg disabled:opacity-50"
-                >
-                  <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
-                  <span className="font-semibold">Yenile</span>
-                </button>
-                <button
-                  onClick={() => setShowForm(!showForm)}
-                  className="flex items-center gap-2 bg-white text-blue-600 px-6 py-3 rounded-xl hover:bg-blue-50 transition-all shadow-xl font-bold"
-                >
-                  <Plus className="w-5 h-5" />
-                  Yeni Müşteri
-                </button>
-              </div>
-            </div>
+                                <div className="grid grid-cols-5 gap-4">
+                                    <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
+                                        <div className="flex items-center gap-3">
+                                            <div className="bg-blue-500 p-3 rounded-lg"><Activity size={24} className="text-white" /></div>
+                                            <div>
+                                                <div className="text-3xl font-bold text-white">{customers.length}</div>
+                                                <div className="text-blue-100 text-sm">Toplam Müşteri</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
+                                        <div className="flex items-center gap-3">
+                                            <div className="bg-green-500 p-3 rounded-lg"><CheckCircle2 size={24} className="text-white" /></div>
+                                            <div>
+                                                <div className="text-3xl font-bold text-white">{customers.filter(c => c.status === 'Rezervasyon Yapıldı' || c.status === 'Teslim Edildi').length}</div>
+                                                <div className="text-blue-100 text-sm">Aktif Kiralama</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
+                                        <div className="flex items-center gap-3">
+                                            <div className="bg-purple-500 p-3 rounded-lg"><Target size={24} className="text-white" /></div>
+                                            <div>
+                                                <div className="text-3xl font-bold text-white">{customers.filter(c => c.status === 'Scoring Yapıldı').length}</div>
+                                                <div className="text-blue-100 text-sm">Scoring Yapıldı</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
+                                        <div className="flex items-center gap-3">
+                                            <div className="bg-yellow-500 p-3 rounded-lg"><DollarSign size={24} className="text-white" /></div>
+                                            <div>
+                                                <div className="text-2xl font-bold text-white">{totalRevenue.toLocaleString('tr-TR')} ₺</div>
+                                                <div className="text-blue-100 text-sm">Toplam Gelir</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
+                                        <div className="flex items-center gap-3">
+                                            <div className="bg-indigo-500 p-3 rounded-lg"><TrendingUp size={24} className="text-white" /></div>
+                                            <div>
+                                                <div className="text-2xl font-bold text-white">{totalDBS.toLocaleString('tr-TR')} ₺</div>
+                                                <div className="text-blue-100 text-sm">Toplam DBS</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-            {/* Premium Stats */}
-            <div className="grid grid-cols-5 gap-4">
-              <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
-                <div className="flex items-center gap-3">
-                  <div className="bg-blue-500 p-3 rounded-lg">
-                    <Activity className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <div className="text-3xl font-bold text-white">{customers.length}</div>
-                    <div className="text-blue-100 text-sm font-medium">Toplam Müşteri</div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
-                <div className="flex items-center gap-3">
-                  <div className="bg-green-500 p-3 rounded-lg">
-                    <CheckCircle2 className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <div className="text-3xl font-bold text-white">
-                      {customers.filter(c => c.status === 'Rezervasyon Yapıldı' || c.status === 'Teslim Edildi').length}
-                    </div>
-                    <div className="text-blue-100 text-sm font-medium">Aktif Kiralama</div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
-                <div className="flex items-center gap-3">
-                  <div className="bg-purple-500 p-3 rounded-lg">
-                    <Target className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <div className="text-3xl font-bold text-white">
-                      {customers.filter(c => c.status === 'Scoring Yapıldı').length}
-                    </div>
-                    <div className="text-blue-100 text-sm font-medium">Scoring Yapıldı</div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
-                <div className="flex items-center gap-3">
-                  <div className="bg-yellow-500 p-3 rounded-lg">
-                    <DollarSign className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <div className="text-2xl font-bold text-white">
-                      {totalRevenue.toLocaleString('tr-TR')} ₺
-                    </div>
-                    <div className="text-blue-100 text-sm font-medium">Toplam Gelir</div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
-                <div className="flex items-center gap-3">
-                  <div className="bg-indigo-500 p-3 rounded-lg">
-                    <TrendingUp className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <div className="text-2xl font-bold text-white">
-                      {totalDBS.toLocaleString('tr-TR')} ₺
-                    </div>
-                    <div className="text-blue-100 text-sm font-medium">Toplam DBS</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Form */}
-        {showForm && (
-          <div className="bg-white rounded-2xl shadow-2xl p-8 mb-6 border border-slate-200">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-3">
-                <Zap className="w-7 h-7 text-blue-600" />
-                {editingId ? 'Müşteri Düzenle' : 'Yeni Müşteri Ekle'}
-              </h2>
-              <button
-                onClick={resetForm}
-                className="text-slate-400 hover:text-slate-600 transition-colors"
-              >
-                <XCircle className="w-6 h-6" />
-              </button>
-            </div>
-
-            <div className="grid grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">
-                  Müşteri Adı <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  value={formData.name}
-                  onChange={(e) => setFormData({...formData, name: e.target.value})}
-                  className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                  placeholder="Müşteri adını girin"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">
-                  Telefon <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="tel"
-                  value={formData.phone}
-                  onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                  className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                  placeholder="0555 123 45 67"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">E-posta</label>
-                <input
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => setFormData({...formData, email: e.target.value})}
-                  className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                  placeholder="musteri@email.com"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">
-                  Araç Modeli <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  value={formData.carModel}
-                  onChange={(e) => setFormData({...formData, carModel: e.target.value})}
-                  className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                  placeholder="BMW 5 Serisi, Mercedes C-Class..."
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">Durum</label>
-                <select
-                  value={formData.status}
-                  onChange={(e) => setFormData({...formData, status: e.target.value})}
-                  className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all font-medium"
-                >
-                  {statusOptions.map(status => (
-                    <option key={status} value={status}>{status}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">Fiyat (₺)</label>
-                <input
-                  type="text"
-                  value={formData.price}
-                  onChange={(e) => setFormData({...formData, price: e.target.value})}
-                  className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                  placeholder="50000"
-                />
-              </div>
-
-              <div className="col-span-2">
-                <label className="block text-sm font-bold text-slate-700 mb-2">DBS Miktarı (₺)</label>
-                <input
-                  type="text"
-                  value={formData.dbsAmount}
-                  onChange={(e) => setFormData({...formData, dbsAmount: e.target.value})}
-                  className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                  placeholder="DBS miktarını girin"
-                />
-              </div>
-
-              <div className="col-span-2">
-                <label className="block text-sm font-bold text-slate-700 mb-2">Notlar</label>
-                <textarea
-                  value={formData.notes}
-                  onChange={(e) => setFormData({...formData, notes: e.target.value})}
-                  rows="3"
-                  className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                  placeholder="Müşteriyle ilgili önemli notlar..."
-                />
-              </div>
-
-              <div className="col-span-2 flex gap-4 mt-4">
-                <button
-                  onClick={handleSubmit}
-                  disabled={loading}
-                  className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg font-bold text-lg disabled:opacity-50"
-                >
-                  {editingId ? '✓ Güncelle' : '+ Kaydet'}
-                </button>
-                <button
-                  onClick={resetForm}
-                  className="flex-1 bg-slate-200 text-slate-700 px-8 py-4 rounded-xl hover:bg-slate-300 transition-all font-bold text-lg"
-                >
-                  İptal
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Filters */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 mb-6 border border-slate-200">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="relative">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
-              <input
-                type="text"
-                placeholder="Müşteri adı, telefon veya araç modeli ara..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-              />
-            </div>
-            <select
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
-              className="px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all font-medium"
-            >
-              <option value="all">📊 Tüm Durumlar</option>
-              {statusOptions.map(status => (
-                <option key={status} value={status}>{status}</option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        {/* Customer Table */}
-        <div className="bg-white rounded-2xl shadow-2xl overflow-hidden border border-slate-200">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gradient-to-r from-slate-50 to-slate-100 border-b-2 border-slate-200">
-                <tr>
-                  <th className="px-6 py-4 text-left text-xs font-black text-slate-700 uppercase tracking-wider">Müşteri</th>
-                  <th className="px-6 py-4 text-left text-xs font-black text-slate-700 uppercase tracking-wider">İletişim</th>
-                  <th className="px-6 py-4 text-left text-xs font-black text-slate-700 uppercase tracking-wider">Araç</th>
-                  <th className="px-6 py-4 text-left text-xs font-black text-slate-700 uppercase tracking-wider">Durum</th>
-                  <th className="px-6 py-4 text-left text-xs font-black text-slate-700 uppercase tracking-wider">Fiyat</th>
-                  <th className="px-6 py-4 text-left text-xs font-black text-slate-700 uppercase tracking-wider">DBS</th>
-                  <th className="px-6 py-4 text-left text-xs font-black text-slate-700 uppercase tracking-wider">İşlemler</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-200">
-                {filteredCustomers.length === 0 ? (
-                  <tr>
-                    <td colSpan="7" className="px-6 py-16 text-center">
-                      <div className="flex flex-col items-center gap-4">
-                        <Activity className="w-16 h-16 text-slate-300" />
-                        <p className="text-slate-500 text-lg font-medium">
-                          {loading ? 'Veriler yükleniyor...' : 'Henüz müşteri kaydı yok. Hemen ekleyin!'}
-                        </p>
-                      </div>
-                    </td>
-                  </tr>
-                ) : (
-                  filteredCustomers.map(customer => (
-                    <tr key={customer.id} className="hover:bg-blue-50 transition-colors">
-                      <td className="px-6 py-4">
-                        <div className="font-bold text-slate-900 text-lg">{customer.name}</div>
-                        {customer.notes && (
-                          <div className="text-sm text-slate-500 mt-1 italic">
-                            {customer.notes.slice(0, 60)}{customer.notes.length > 60 ? '...' : ''}
-                          </div>
+                        {showForm && (
+                            <div className="bg-white rounded-2xl shadow-2xl p-8 mb-6">
+                                <div className="flex items-center justify-between mb-6">
+                                    <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-3">
+                                        <Zap size={28} className="text-blue-600" />
+                                        {editingId ? 'Müşteri Düzenle' : 'Yeni Müşteri Ekle'}
+                                    </h2>
+                                    <button onClick={resetForm} className="text-slate-400 hover:text-slate-600">
+                                        <XCircle size={24} />
+                                    </button>
+                                </div>
+                                <div className="grid grid-cols-2 gap-6">
+                                    <div>
+                                        <label className="block text-sm font-bold text-slate-700 mb-2">Müşteri Adı <span className="text-red-500">*</span></label>
+                                        <input type="text" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500" placeholder="Müşteri adını girin" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-bold text-slate-700 mb-2">Telefon <span className="text-red-500">*</span></label>
+                                        <input type="tel" value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})} className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500" placeholder="0555 123 45 67" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-bold text-slate-700 mb-2">E-posta</label>
+                                        <input type="email" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500" placeholder="musteri@email.com" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-bold text-slate-700 mb-2">Araç Modeli <span className="text-red-500">*</span></label>
+                                        <input type="text" value={formData.carModel} onChange={(e) => setFormData({...formData, carModel: e.target.value})} className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500" placeholder="BMW 5 Serisi..." />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-bold text-slate-700 mb-2">Durum</label>
+                                        <select value={formData.status} onChange={(e) => setFormData({...formData, status: e.target.value})} className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500">
+                                            {statusOptions.map(s => <option key={s} value={s}>{s}</option>)}
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-bold text-slate-700 mb-2">Fiyat (₺)</label>
+                                        <input type="text" value={formData.price} onChange={(e) => setFormData({...formData, price: e.target.value})} className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500" placeholder="50000" />
+                                    </div>
+                                    <div className="col-span-2">
+                                        <label className="block text-sm font-bold text-slate-700 mb-2">DBS Miktarı (₺)</label>
+                                        <input type="text" value={formData.dbsAmount} onChange={(e) => setFormData({...formData, dbsAmount: e.target.value})} className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500" placeholder="DBS miktarı" />
+                                    </div>
+                                    <div className="col-span-2">
+                                        <label className="block text-sm font-bold text-slate-700 mb-2">Notlar</label>
+                                        <textarea value={formData.notes} onChange={(e) => setFormData({...formData, notes: e.target.value})} rows="3" className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500" placeholder="Notlar..."></textarea>
+                                    </div>
+                                    <div className="col-span-2 flex gap-4 mt-4">
+                                        <button onClick={handleSubmit} disabled={loading} className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-xl hover:from-blue-700 hover:to-indigo-700 font-bold text-lg">
+                                            {editingId ? '✓ Güncelle' : '+ Kaydet'}
+                                        </button>
+                                        <button onClick={resetForm} className="flex-1 bg-slate-200 text-slate-700 px-8 py-4 rounded-xl hover:bg-slate-300 font-bold text-lg">İptal</button>
+                                    </div>
+                                </div>
+                            </div>
                         )}
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-2 text-slate-700 font-medium">
-                          <Phone className="w-4 h-4 text-blue-500" />
-                          {customer.phone}
-                        </div>
-                        {customer.email && (
-                          <div className="flex items-center gap-2 text-slate-600 text-sm mt-1">
-                            <Mail className="w-4 h-4 text-slate-400" />
-                            {customer.email}
-                          </div>
-                        )}
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-2 font-bold text-slate-900">
-                          <Car className="w-5 h-5 text-indigo-500" />
-                          {customer.carModel}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className={`inline-flex items-center gap-2 px-4 py-2 rounded-full font-bold text-sm ${statusConfig[customer.status]?.bgLight} ${statusConfig[customer.status]?.textColor} shadow-sm`}>
-                          <StatusIcon status={customer.status} />
-                          {customer.status}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="text-lg font-bold text-green-600">
-                          {customer.price ? `${parseFloat(customer.price).toLocaleString('tr-TR')} ₺` : '-'}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="text-lg font-bold text-purple-600">
-                          {customer.dbsAmount ? `${parseFloat(customer.dbsAmount).toLocaleString('tr-TR')} ₺` : '-'}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex gap-2">
-                          <button
-                            onClick={() => handleEdit(customer)}
-                            className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors"
-                          >
-                            <Edit2 className="w-5 h-5" />
-                          </button>
-                          <button
-                            onClick={() => handleDelete(customer.id)}
-                            className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors"
-                          >
-                            <Trash2 className="w-5 h-5" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
 
-export default BorusanCRM;
+                        <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="relative">
+                                    <Search size={20} className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400" />
+                                    <input type="text" placeholder="Müşteri adı, telefon veya araç ara..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full pl-12 pr-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500" />
+                                </div>
+                                <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} className="px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500">
+                                    <option value="all">📊 Tüm Durumlar</option>
+                                    {statusOptions.map(s => <option key={s} value={s}>{s}</option>)}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
+                            <div className="overflow-x-auto">
+                                <table className="w-full">
+                                    <thead className="bg-gradient-to-r from-slate-50 to-slate-100 border-b-2">
+                                        <tr>
+                                            <th className="px-6 py-4 text-left text-xs font-black text-slate-700 uppercase">Müşteri</th>
+                                            <th className="px-6 py-4 text-left text-xs font-black text-slate-700 uppercase">İletişim</th>
+                                            <th className="px-6 py-4 text-left text-xs font-black text-slate-700 uppercase">Araç</th>
+                                            <th className="px-6 py-4 text-left text-xs font-black text-slate-700 uppercase">Durum</th>
+                                            <th className="px-6 py-4 text-left text-xs font-black text-slate-700 uppercase">Fiyat</th>
+                                            <th className="px-6 py-4 text-left text-xs font-black text-slate-700 uppercase">DBS</th>
+                                            <th className="px-6 py-4 text-left text-xs font-black text-slate-700 uppercase">İşlemler</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y">
+                                        {filteredCustomers.length === 0 ? (
+                                            <tr>
+                                                <td colSpan="7" className="px-6 py-16 text-center">
+                                                    <div className="flex flex-col items-center gap-4">
+                                                        <Activity size={64} className="text-slate-300" />
+                                                        <p className="text-slate-500 text-lg">{loading ? 'Veriler yükleniyor...' : 'Henüz müşteri yok. Hemen ekleyin!'}</p>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ) : (
+                                            filteredCustomers.map(customer => (
+                                                <tr key={customer.id} className="hover:bg-blue-50 transition-colors">
+                                                    <td className="px-6 py-4">
+                                                        <div className="font-bold text-slate-900 text-lg">{customer.name}</div>
+                                                        {customer.notes && <div className="text-sm text-slate-500 italic">{customer.notes.slice(0, 60)}...</div>}
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <div className="flex items-center gap-2 text-slate-700"><Phone size={16} className="text-blue-500" />{customer.phone}</div>
+                                                        {customer.email && <div className="flex items-center gap-2 text-slate-600 text-sm mt-1"><Mail size={16} />{customer.email}</div>}
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <div className="flex items-center gap-2 font-bold text-slate-900"><Car size={20} className="text-indigo-500" />{customer.carModel}</div>
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <span className={`inline-flex px-4 py-2 rounded-full font-bold text-sm ${statusConfig[customer.status]?.bgLight} ${statusConfig[customer.status]?.textColor}`}>
+                                                            {customer.status}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <div className="text-lg font-bold text-green-600">
+                                                            {customer.price ? `${parseFloat(customer.price).toLocaleString('tr-TR')} ₺` : '-'}
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <div className="text-lg font-bold text-purple-600">
+                                                            {customer.dbsAmount ? `${parseFloat(customer.dbsAmount).toLocaleString('tr-TR')} ₺` : '-'}
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <div className="flex gap-2">
+                                                            <button onClick={() => handleEdit(customer)} className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg">
+                                                                <Edit2 size={20} />
+                                                            </button>
+                                                            <button onClick={() => handleDelete(customer.id)} className="p-2 text-red-600 hover:bg-red-100 rounded-lg">
+                                                                <Trash2 size={20} />
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        lucide.createIcons();
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<BorusanCRM />);
+    </script>
+</body>
+</html>

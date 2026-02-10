@@ -494,36 +494,118 @@ const SortButton = ({column, label}) => (
   </button>
 );
 
-return(<div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6"><div className="max-w-7xl mx-auto">
+return(<div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-3 sm:p-4 lg:p-6"><div className="max-w-7xl mx-auto">
 
 {/* HEADER */}
-<div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl shadow-2xl p-8 mb-6 relative overflow-hidden"><div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full -mr-32 -mt-32"></div><div className="relative"><div className="flex items-center justify-between mb-6"><div><div className="flex items-center gap-3 mb-2"><Icon path={icons.car} className="w-10 h-10 text-white"/><h1 className="text-4xl font-black text-white">BORUSAN OTOMOTİV</h1></div><p className="text-blue-100 text-lg font-medium ml-13">Premium Kiralama CRM</p><div className="flex items-center gap-3 mt-2 ml-13">
+<div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl shadow-2xl p-4 sm:p-6 lg:p-8 mb-4 lg:mb-6 relative overflow-hidden"><div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full -mr-32 -mt-32"></div><div className="relative"><div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-6">
+<div>
+<div className="flex items-center gap-3 mb-2">
+<Icon path={icons.car} className="w-8 lg:w-10 h-8 lg:h-10 text-white"/>
+<h1 className="text-2xl lg:text-4xl font-black text-white">BORUSAN OTOMOTİV</h1>
+</div>
+<p className="text-blue-100 text-base lg:text-lg font-medium ml-11 lg:ml-13">Premium Kiralama CRM</p>
+<div className="flex flex-wrap items-center gap-3 mt-2 ml-11 lg:ml-13">
 <div className="flex items-center gap-2">
 <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-<span className="text-blue-100 text-sm">🔥 Firebase</span>
+<span className="text-blue-100 text-xs lg:text-sm">🔥 Firebase</span>
 </div>
 {notificationEnabled && (
 <div className="flex items-center gap-2">
 <Icon path={icons.bell} className="w-4 h-4 text-green-200"/>
-<span className="text-green-200 text-sm">Bildirim</span>
+<span className="text-green-200 text-xs lg:text-sm">Bildirim</span>
 </div>
 )}
 {emailSettings.autoSendEnabled && emailSettings.recipientEmail && (
 <div className="flex items-center gap-2">
 <Icon path={icons.mail} className="w-4 h-4 text-yellow-200"/>
-<span className="text-yellow-200 text-sm">E-posta Aktif</span>
+<span className="text-yellow-200 text-xs lg:text-sm">E-posta Aktif</span>
 </div>
 )}
-</div></div><div className="flex gap-3">
-<button onClick={()=>setShowEmailSettings(!showEmailSettings)} className="flex items-center gap-2 bg-indigo-600 text-white px-5 py-3 rounded-xl hover:bg-indigo-700 transition-all font-bold"><Icon path={icons.settings} className="w-5 h-5"/>E-posta Ayarları</button>
-<input type="file" id="excel-upload" accept=".xlsx,.xls" onChange={handleExcelUpload} className="hidden"/><button onClick={downloadExcelTemplate} className="flex items-center gap-2 bg-purple-600 text-white px-5 py-3 rounded-xl hover:bg-purple-700 transition-all font-bold"><span className="text-lg">📥</span>Şablon</button><button onClick={()=>document.getElementById('excel-upload').click()} disabled={loading} className="flex items-center gap-2 bg-green-600 text-white px-5 py-3 rounded-xl hover:bg-green-700 transition-all font-bold disabled:opacity-50"><span className="text-lg">📊</span>Excel</button><button onClick={exportToExcel} disabled={sortedAndFilteredCustomers.length===0} className="flex items-center gap-2 bg-teal-600 text-white px-5 py-3 rounded-xl hover:bg-teal-700 transition-all font-bold disabled:opacity-50"><Icon path={icons.download} className="w-5 h-5"/>İndir</button><button onClick={()=>setShowForm(!showForm)} className="flex items-center gap-2 bg-white text-blue-600 px-6 py-3 rounded-xl hover:bg-blue-50 transition-all font-bold"><Icon path={icons.plus} className="w-5 h-5"/>Yeni</button></div></div>
+</div>
+</div>
+<div className="flex flex-wrap gap-2 lg:gap-3 w-full lg:w-auto">
+<button onClick={()=>setShowEmailSettings(!showEmailSettings)} className="flex items-center gap-2 bg-indigo-600 text-white px-3 lg:px-5 py-2 lg:py-3 rounded-xl hover:bg-indigo-700 transition-all font-bold text-sm lg:text-base">
+<Icon path={icons.settings} className="w-4 lg:w-5 h-4 lg:h-5"/>
+<span className="hidden sm:inline">E-posta</span>
+</button>
+<input type="file" id="excel-upload" accept=".xlsx,.xls" onChange={handleExcelUpload} className="hidden"/>
+<button onClick={downloadExcelTemplate} className="flex items-center gap-2 bg-purple-600 text-white px-3 lg:px-5 py-2 lg:py-3 rounded-xl hover:bg-purple-700 transition-all font-bold text-sm lg:text-base">
+<span className="text-base lg:text-lg">📥</span>
+<span className="hidden sm:inline">Şablon</span>
+</button>
+<button onClick={()=>document.getElementById('excel-upload').click()} disabled={loading} className="flex items-center gap-2 bg-green-600 text-white px-3 lg:px-5 py-2 lg:py-3 rounded-xl hover:bg-green-700 transition-all font-bold disabled:opacity-50 text-sm lg:text-base">
+<span className="text-base lg:text-lg">📊</span>
+<span className="hidden sm:inline">Excel</span>
+</button>
+<button onClick={exportToExcel} disabled={sortedAndFilteredCustomers.length===0} className="flex items-center gap-2 bg-teal-600 text-white px-3 lg:px-5 py-2 lg:py-3 rounded-xl hover:bg-teal-700 transition-all font-bold disabled:opacity-50 text-sm lg:text-base">
+<Icon path={icons.download} className="w-4 lg:w-5 h-4 lg:h-5"/>
+<span className="hidden sm:inline">İndir</span>
+</button>
+<button onClick={()=>setShowForm(!showForm)} className="flex items-center gap-2 bg-white text-blue-600 px-4 lg:px-6 py-2 lg:py-3 rounded-xl hover:bg-blue-50 transition-all font-bold text-sm lg:text-base">
+<Icon path={icons.plus} className="w-4 lg:w-5 h-4 lg:h-5"/>
+<span>Yeni</span>
+</button>
+</div>
+</div>
 
 {/* İSTATİSTİKLER */}
-<div className="grid grid-cols-4 gap-4"><div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20"><div className="flex items-center gap-3"><div className="bg-blue-500 p-3 rounded-lg"><Icon path={icons.activity} className="w-6 h-6 text-white"/></div><div><div className="text-3xl font-bold text-white">{customers.length}</div><div className="text-blue-100 text-sm">Toplam Müşteri</div></div></div></div><div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20"><div className="flex items-center gap-3"><div className="bg-green-500 p-3 rounded-lg"><Icon path={icons.check} className="w-6 h-6 text-white"/></div><div><div className="text-3xl font-bold text-white">{customers.filter(c=>c.status==='Teslimat').length}</div><div className="text-blue-100 text-sm">Teslimat</div></div></div></div><div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20"><div className="flex items-center gap-3"><div className="bg-yellow-500 p-3 rounded-lg"><Icon path={icons.dollar} className="w-6 h-6 text-white"/></div><div><div className="text-2xl font-bold text-white">{totalRevenue.toLocaleString('tr-TR')} ₺</div><div className="text-blue-100 text-sm">Gelir</div></div></div></div><div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20"><div className="flex items-center gap-3"><div className="bg-indigo-500 p-3 rounded-lg"><Icon path={icons.trend} className="w-6 h-6 text-white"/></div><div><div className="text-2xl font-bold text-white">{totalDBS.toLocaleString('tr-TR')} ₺</div><div className="text-blue-100 text-sm">DBS</div></div></div></div></div></div></div>
+<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+  <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20 hover:bg-white/20 transition-all cursor-pointer"
+       onClick={() => setFilters({...filters, status: 'Teklif Gönderildi'})}>
+    <div className="flex items-center gap-3">
+      <div className="bg-purple-500 p-3 rounded-lg">
+        <Icon path={icons.mail} className="w-6 h-6 text-white"/>
+      </div>
+      <div className="flex-1">
+        <div className="text-3xl font-bold text-white">{customers.filter(c=>c.status==='Teklif Gönderildi').length}</div>
+        <div className="text-purple-100 text-sm">Teklif Gönderildi</div>
+      </div>
+    </div>
+  </div>
+
+  <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20 hover:bg-white/20 transition-all cursor-pointer"
+       onClick={() => setFilters({...filters, status: 'Finansal Değerlendirme'})}>
+    <div className="flex items-center gap-3">
+      <div className="bg-yellow-500 p-3 rounded-lg">
+        <Icon path={icons.dollar} className="w-6 h-6 text-white"/>
+      </div>
+      <div className="flex-1">
+        <div className="text-3xl font-bold text-white">{customers.filter(c=>c.status==='Finansal Değerlendirme').length}</div>
+        <div className="text-yellow-100 text-sm">Finansal Değerlendirme</div>
+      </div>
+    </div>
+  </div>
+
+  <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20 hover:bg-white/20 transition-all cursor-pointer"
+       onClick={() => setFilters({...filters, status: 'Sözleşme/DBS Bekleniyor'})}>
+    <div className="flex items-center gap-3">
+      <div className="bg-orange-500 p-3 rounded-lg">
+        <Icon path={icons.target} className="w-6 h-6 text-white"/>
+      </div>
+      <div className="flex-1">
+        <div className="text-3xl font-bold text-white">{customers.filter(c=>c.status==='Sözleşme/DBS Bekleniyor').length}</div>
+        <div className="text-orange-100 text-sm">Sözleşme/DBS</div>
+      </div>
+    </div>
+  </div>
+
+  <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20 hover:bg-white/20 transition-all cursor-pointer"
+       onClick={() => setFilters({...filters, status: 'Teslimat'})}>
+    <div className="flex items-center gap-3">
+      <div className="bg-green-500 p-3 rounded-lg">
+        <Icon path={icons.check} className="w-6 h-6 text-white"/>
+      </div>
+      <div className="flex-1">
+        <div className="text-3xl font-bold text-white">{customers.filter(c=>c.status==='Teslimat').length}</div>
+        <div className="text-green-100 text-sm">Teslimat</div>
+      </div>
+    </div>
+  </div>
+</div></div></div>
 
 {/* 📧 E-POSTA AYARLARI */}
 {showEmailSettings && (
-  <div className="bg-white rounded-2xl shadow-2xl p-8 mb-6">
+  <div className="bg-white rounded-2xl shadow-2xl p-4 sm:p-6 lg:p-8 mb-4 lg:mb-6">
     <div className="flex items-center justify-between mb-6">
       <div className="flex items-center gap-3">
         <Icon path={icons.settings} className="w-8 h-8 text-blue-600"/>
@@ -682,31 +764,31 @@ Borusan CRM Sistemi`}
 
 {/* BİLDİRİM BANNER */}
 {overdueCustomers.length > 0 && (
-  <div className="bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl shadow-lg p-6 mb-6 text-white">
-    <div className="flex items-center justify-between">
-      <div className="flex items-center gap-4">
-        <div className="bg-white/20 p-3 rounded-lg animate-pulse">
-          <Icon path={icons.bell} className="w-8 h-8"/>
+  <div className="bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl shadow-lg p-4 lg:p-6 mb-6 text-white">
+    <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+      <div className="flex items-center gap-3 lg:gap-4">
+        <div className="bg-white/20 p-2 lg:p-3 rounded-lg animate-pulse">
+          <Icon path={icons.bell} className="w-6 lg:w-8 h-6 lg:h-8"/>
         </div>
         <div>
-          <h3 className="text-xl font-bold mb-1">⚠️ {overdueCustomers.length} Müşteri Takip Bekliyor!</h3>
-          <p className="text-orange-100">3 gündür "Teklif Gönderildi" aşamasında</p>
+          <h3 className="text-lg lg:text-xl font-bold mb-1">⚠️ {overdueCustomers.length} Müşteri Takip Bekliyor!</h3>
+          <p className="text-orange-100 text-sm lg:text-base">3 gündür "Teklif Gönderildi" aşamasında</p>
         </div>
       </div>
-      <div className="flex gap-3">
+      <div className="flex gap-2 lg:gap-3 w-full lg:w-auto">
         <button 
           onClick={async()=>{
             const success = await sendEmailNotification(overdueCustomers, false);
             if(success) alert('✅ E-posta gönderildi!');
           }}
-          className="flex items-center gap-2 bg-white text-orange-600 px-6 py-3 rounded-xl font-bold hover:bg-orange-50"
+          className="flex-1 lg:flex-none flex items-center justify-center gap-2 bg-white text-orange-600 px-4 lg:px-6 py-2 lg:py-3 rounded-xl font-bold hover:bg-orange-50 text-sm lg:text-base"
         >
-          <Icon path={icons.mail} className="w-5 h-5"/>
-          E-posta Gönder
+          <Icon path={icons.mail} className="w-4 lg:w-5 h-4 lg:h-5"/>
+          <span>E-posta</span>
         </button>
         <button 
           onClick={() => setFilters({...filters, status: 'Teklif Gönderildi'})}
-          className="bg-white text-orange-600 px-6 py-3 rounded-xl font-bold hover:bg-orange-50"
+          className="flex-1 lg:flex-none bg-white text-orange-600 px-4 lg:px-6 py-2 lg:py-3 rounded-xl font-bold hover:bg-orange-50 text-sm lg:text-base"
         >
           Göster
         </button>
@@ -716,10 +798,10 @@ Borusan CRM Sistemi`}
 )}
 
 {/* FORM */}
-{showForm&&(<div className="bg-white rounded-2xl shadow-2xl p-8 mb-6"><div className="flex items-center justify-between mb-6"><h2 className="text-2xl font-bold text-slate-800">⚡ {editingId?'Müşteri Düzenle':'Yeni Müşteri Ekle'}</h2><button onClick={resetForm} className="text-slate-400 hover:text-slate-600"><Icon path={icons.close} className="w-6 h-6"/></button></div><div className="grid grid-cols-2 gap-6"><div><label className="block text-sm font-bold text-slate-700 mb-2">Müşteri Adı <span className="text-red-500">*</span></label><input type="text" value={formData.name} onChange={(e)=>setFormData({...formData,name:e.target.value})} className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500" placeholder="Müşteri adını girin"/></div><div><label className="block text-sm font-bold text-slate-700 mb-2">Telefon <span className="text-red-500">*</span></label><input type="tel" value={formData.phone} onChange={(e)=>setFormData({...formData,phone:e.target.value})} className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500" placeholder="0555 123 45 67"/></div><div><label className="block text-sm font-bold text-slate-700 mb-2">E-posta</label><input type="email" value={formData.email} onChange={(e)=>setFormData({...formData,email:e.target.value})} className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500" placeholder="musteri@email.com"/></div><div><label className="block text-sm font-bold text-slate-700 mb-2">Araç Modeli <span className="text-red-500">*</span></label><input type="text" value={formData.carModel} onChange={(e)=>setFormData({...formData,carModel:e.target.value})} className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500" placeholder="BMW 5 Serisi..."/></div><div><label className="block text-sm font-bold text-slate-700 mb-2">Durum</label><select value={formData.status} onChange={(e)=>setFormData({...formData,status:e.target.value})} className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500">{statusOptions.map(s=><option key={s} value={s}>{s}</option>)}</select></div><div><label className="block text-sm font-bold text-slate-700 mb-2">Fiyat (₺)</label><input type="text" value={formData.price} onChange={(e)=>setFormData({...formData,price:e.target.value})} className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500" placeholder="50000"/></div><div className="col-span-2"><label className="block text-sm font-bold text-slate-700 mb-2">DBS Miktarı (₺)</label><input type="text" value={formData.dbsAmount} onChange={(e)=>setFormData({...formData,dbsAmount:e.target.value})} className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500" placeholder="DBS miktarı"/></div><div className="col-span-2"><label className="block text-sm font-bold text-slate-700 mb-2">Notlar</label><textarea value={formData.notes} onChange={(e)=>setFormData({...formData,notes:e.target.value})} rows="3" className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500" placeholder="Notlar..."></textarea></div><div className="col-span-2 flex gap-4 mt-4"><button onClick={handleSubmit} disabled={loading} className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-xl hover:from-blue-700 hover:to-indigo-700 font-bold text-lg disabled:opacity-50">{loading?'Kaydediliyor...':(editingId?'✓ Güncelle':'+ Kaydet')}</button><button onClick={resetForm} className="flex-1 bg-slate-200 text-slate-700 px-8 py-4 rounded-xl hover:bg-slate-300 font-bold text-lg">İptal</button></div></div></div>)}
+{showForm&&(<div className="bg-white rounded-2xl shadow-2xl p-4 sm:p-6 lg:p-8 mb-4 lg:mb-6"><div className="flex items-center justify-between mb-6"><h2 className="text-2xl font-bold text-slate-800">⚡ {editingId?'Müşteri Düzenle':'Yeni Müşteri Ekle'}</h2><button onClick={resetForm} className="text-slate-400 hover:text-slate-600"><Icon path={icons.close} className="w-6 h-6"/></button></div><div className="grid grid-cols-2 gap-6"><div><label className="block text-sm font-bold text-slate-700 mb-2">Müşteri Adı <span className="text-red-500">*</span></label><input type="text" value={formData.name} onChange={(e)=>setFormData({...formData,name:e.target.value})} className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500" placeholder="Müşteri adını girin"/></div><div><label className="block text-sm font-bold text-slate-700 mb-2">Telefon <span className="text-red-500">*</span></label><input type="tel" value={formData.phone} onChange={(e)=>setFormData({...formData,phone:e.target.value})} className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500" placeholder="0555 123 45 67"/></div><div><label className="block text-sm font-bold text-slate-700 mb-2">E-posta</label><input type="email" value={formData.email} onChange={(e)=>setFormData({...formData,email:e.target.value})} className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500" placeholder="musteri@email.com"/></div><div><label className="block text-sm font-bold text-slate-700 mb-2">Araç Modeli <span className="text-red-500">*</span></label><input type="text" value={formData.carModel} onChange={(e)=>setFormData({...formData,carModel:e.target.value})} className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500" placeholder="BMW 5 Serisi..."/></div><div><label className="block text-sm font-bold text-slate-700 mb-2">Durum</label><select value={formData.status} onChange={(e)=>setFormData({...formData,status:e.target.value})} className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500">{statusOptions.map(s=><option key={s} value={s}>{s}</option>)}</select></div><div><label className="block text-sm font-bold text-slate-700 mb-2">Fiyat (₺)</label><input type="text" value={formData.price} onChange={(e)=>setFormData({...formData,price:e.target.value})} className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500" placeholder="50000"/></div><div className="col-span-2"><label className="block text-sm font-bold text-slate-700 mb-2">DBS Miktarı (₺)</label><input type="text" value={formData.dbsAmount} onChange={(e)=>setFormData({...formData,dbsAmount:e.target.value})} className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500" placeholder="DBS miktarı"/></div><div className="col-span-2"><label className="block text-sm font-bold text-slate-700 mb-2">Notlar</label><textarea value={formData.notes} onChange={(e)=>setFormData({...formData,notes:e.target.value})} rows="3" className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500" placeholder="Notlar..."></textarea></div><div className="col-span-2 flex gap-4 mt-4"><button onClick={handleSubmit} disabled={loading} className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-xl hover:from-blue-700 hover:to-indigo-700 font-bold text-lg disabled:opacity-50">{loading?'Kaydediliyor...':(editingId?'✓ Güncelle':'+ Kaydet')}</button><button onClick={resetForm} className="flex-1 bg-slate-200 text-slate-700 px-8 py-4 rounded-xl hover:bg-slate-300 font-bold text-lg">İptal</button></div></div></div>)}
 
 {/* FİLTRE PANELİ */}
-<div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
+<div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6 mb-4 lg:mb-6">
   <div className="flex items-center justify-between mb-4">
     <div className="flex items-center gap-3">
       <Icon path={icons.filter} className="w-6 h-6 text-blue-600"/>
@@ -748,7 +830,10 @@ Borusan CRM Sistemi`}
 </div>
 
 {/* TABLO */}
-<div className="bg-white rounded-2xl shadow-2xl overflow-hidden"><div className="overflow-x-auto"><table className="w-full">
+<div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
+  <div className="overflow-x-auto -mx-3 sm:mx-0">
+    <div className="inline-block min-w-full align-middle">
+      <table className="w-full">
 <thead className="bg-gradient-to-r from-slate-50 to-slate-100">
   <tr>
     <th className="px-4 py-3 text-center text-xs font-black text-slate-700 uppercase w-20">Sıra</th>
@@ -880,7 +965,7 @@ return(<tr key={customer.id} className={`hover:bg-blue-50 transition-colors ${is
   </div>
   {customer.notes&&<div className="text-sm text-slate-500 italic">{customer.notes.slice(0,60)}...</div>}
 </td>
-<td className="px-6 py-4"><div className="flex items-center gap-2 text-slate-700"><Icon path={icons.phone} className="w-4 h-4 text-blue-500"/>{customer.phone}</div>{customer.email&&(<div className="flex items-center gap-2 text-slate-600 text-sm mt-1"><Icon path={icons.mail} className="w-4 h-4"/>{customer.email}</div>)}</td><td className="px-6 py-4"><div className="flex items-center gap-2 font-bold text-slate-900"><Icon path={icons.car} className="w-5 h-5 text-indigo-500"/>{customer.carModel}</div></td><td className="px-6 py-4">{createdDate?(<div className="text-sm"><div className="font-semibold text-slate-900">{createdDate.toLocaleDateString('tr-TR')}</div><div className="text-slate-600 text-xs">{createdDate.toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'})}</div></div>):'-'}</td><td className="px-6 py-4"><span className={`inline-flex px-3 py-1 rounded-full font-bold text-xs ${statusConfig[customer.status]?.bgLight} ${statusConfig[customer.status]?.textColor}`}>{customer.status}</span></td><td className="px-6 py-4"><div className="font-bold text-green-600">{customer.price?`${parseFloat(customer.price).toLocaleString('tr-TR')} ₺`:'-'}</div></td><td className="px-6 py-4"><div className="font-bold text-purple-600">{customer.dbsAmount?`${parseFloat(customer.dbsAmount).toLocaleString('tr-TR')} ₺`:'-'}</div></td><td className="px-6 py-4"><div className="flex gap-2"><button onClick={()=>handleEdit(customer)} className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg"><Icon path={icons.edit} className="w-5 h-5"/></button><button onClick={()=>handleDelete(customer.id)} className="p-2 text-red-600 hover:bg-red-100 rounded-lg"><Icon path={icons.trash} className="w-5 h-5"/></button></div></td></tr>)}))}</tbody></table></div></div></div></div>);}
+<td className="px-6 py-4"><div className="flex items-center gap-2 text-slate-700"><Icon path={icons.phone} className="w-4 h-4 text-blue-500"/>{customer.phone}</div>{customer.email&&(<div className="flex items-center gap-2 text-slate-600 text-sm mt-1"><Icon path={icons.mail} className="w-4 h-4"/>{customer.email}</div>)}</td><td className="px-6 py-4"><div className="flex items-center gap-2 font-bold text-slate-900"><Icon path={icons.car} className="w-5 h-5 text-indigo-500"/>{customer.carModel}</div></td><td className="px-6 py-4">{createdDate?(<div className="text-sm"><div className="font-semibold text-slate-900">{createdDate.toLocaleDateString('tr-TR')}</div><div className="text-slate-600 text-xs">{createdDate.toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'})}</div></div>):'-'}</td><td className="px-6 py-4"><span className={`inline-flex px-3 py-1 rounded-full font-bold text-xs ${statusConfig[customer.status]?.bgLight} ${statusConfig[customer.status]?.textColor}`}>{customer.status}</span></td><td className="px-6 py-4"><div className="font-bold text-green-600">{customer.price?`${parseFloat(customer.price).toLocaleString('tr-TR')} ₺`:'-'}</div></td><td className="px-6 py-4"><div className="font-bold text-purple-600">{customer.dbsAmount?`${parseFloat(customer.dbsAmount).toLocaleString('tr-TR')} ₺`:'-'}</div></td><td className="px-6 py-4"><div className="flex gap-2"><button onClick={()=>handleEdit(customer)} className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg"><Icon path={icons.edit} className="w-5 h-5"/></button><button onClick={()=>handleDelete(customer.id)} className="p-2 text-red-600 hover:bg-red-100 rounded-lg"><Icon path={icons.trash} className="w-5 h-5"/></button></div></td></tr>)}))}</tbody></table></div></div></div></div></div>);}
 
 const root=ReactDOM.createRoot(document.getElementById('root'));root.render(<BorusanCRM/>);
 </script>

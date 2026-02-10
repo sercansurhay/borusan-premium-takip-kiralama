@@ -535,16 +535,23 @@ return(<div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-8
     </div>
 
     <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6">
-      <h3 className="font-bold text-blue-900 mb-2">ℹ️ Kurulum Adımları:</h3>
-      <ol className="text-sm text-blue-800 space-y-1 ml-4 list-decimal">
-        <li><a href="https://www.emailjs.com/" target="_blank" className="underline font-semibold">EmailJS.com</a>'a gidin ve ücretsiz hesap oluşturun</li>
-        <li>Email Services'den Gmail/Outlook bağlayın</li>
-        <li>Email Templates bölümünden şu şablonu oluşturun:</li>
-      </ol>
-      <div className="bg-white p-3 rounded mt-3 font-mono text-xs">
-        <div className="text-slate-600 mb-2">Template İçeriği:</div>
-        <code className="text-slate-800">
-{`Merhaba,
+      <h3 className="font-bold text-blue-900 mb-2">ℹ️ Kurulum Adımları (2 dakika):</h3>
+      <ol className="text-sm text-blue-800 space-y-2 ml-4 list-decimal">
+        <li>
+          <a href="https://www.emailjs.com/" target="_blank" className="underline font-semibold">EmailJS.com</a> - Ücretsiz hesap oluşturun
+        </li>
+        <li>
+          <strong>Email Services</strong> (sol menü) → Add Service → Gmail/Outlook bağlayın
+          <div className="bg-green-100 text-green-800 px-2 py-1 rounded mt-1 text-xs">
+            ✓ Service ID'yi kopyalayın (örn: service_abc123)
+          </div>
+        </li>
+        <li>
+          <strong>Email Templates</strong> (sol menü) → Create Template → Aşağıdaki içeriği yapıştırın:
+          <div className="bg-white p-2 rounded mt-1 font-mono text-xs">
+{`Konu: Borusan CRM - {{customer_count}} Müşteri Takip Bekliyor
+
+Merhaba,
 
 {{is_test}}{{customer_count}} müşteri 3 gündür "Teklif Gönderildi" aşamasında bekliyor:
 
@@ -554,14 +561,22 @@ Tarih: {{date}} - {{time}}
 
 ---
 Borusan CRM Sistemi`}
-        </code>
-      </div>
-      <p className="text-xs text-blue-700 mt-2">4. Account → API Keys bölümünden bilgileri aşağıya girin</p>
+          </div>
+          <div className="bg-green-100 text-green-800 px-2 py-1 rounded mt-1 text-xs">
+            ✓ Template ID'yi kopyalayın (örn: template_xyz789)
+          </div>
+        </li>
+        <li>
+          <strong>Account</strong> (sağ üst) → API Keys → Public Key'i kopyalayın
+        </li>
+      </ol>
     </div>
 
     <div className="grid grid-cols-2 gap-6">
-      <div>
-        <label className="block text-sm font-bold text-slate-700 mb-2">E-posta Adresiniz *</label>
+      <div className="col-span-2">
+        <label className="block text-sm font-bold text-slate-700 mb-2">
+          📧 E-posta Adresiniz <span className="text-red-500">*</span>
+        </label>
         <input 
           type="email"
           value={emailSettings.recipientEmail}
@@ -569,10 +584,13 @@ Borusan CRM Sistemi`}
           className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500"
           placeholder="ornek@email.com"
         />
+        <p className="text-xs text-slate-500 mt-1">Bildirimlerin gönderileceği e-posta adresiniz</p>
       </div>
 
       <div>
-        <label className="block text-sm font-bold text-slate-700 mb-2">Service ID *</label>
+        <label className="block text-sm font-bold text-slate-700 mb-2">
+          🔧 Service ID <span className="text-red-500">*</span>
+        </label>
         <input 
           type="text"
           value={emailSettings.serviceId}
@@ -580,10 +598,13 @@ Borusan CRM Sistemi`}
           className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500"
           placeholder="service_xxxxxxx"
         />
+        <p className="text-xs text-slate-500 mt-1">Email Services sayfasından alın</p>
       </div>
 
       <div>
-        <label className="block text-sm font-bold text-slate-700 mb-2">Template ID *</label>
+        <label className="block text-sm font-bold text-slate-700 mb-2">
+          📄 Template ID <span className="text-red-500">*</span>
+        </label>
         <input 
           type="text"
           value={emailSettings.templateId}
@@ -591,10 +612,13 @@ Borusan CRM Sistemi`}
           className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500"
           placeholder="template_xxxxxxx"
         />
+        <p className="text-xs text-slate-500 mt-1">Email Templates sayfasından alın</p>
       </div>
 
-      <div>
-        <label className="block text-sm font-bold text-slate-700 mb-2">Public Key *</label>
+      <div className="col-span-2">
+        <label className="block text-sm font-bold text-slate-700 mb-2">
+          🔑 Public Key <span className="text-red-500">*</span>
+        </label>
         <input 
           type="text"
           value={emailSettings.publicKey}
@@ -602,6 +626,7 @@ Borusan CRM Sistemi`}
           className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500"
           placeholder="xxxxxxxxxxxxxxxxxx"
         />
+        <p className="text-xs text-slate-500 mt-1">Account → API Keys → Public Key</p>
       </div>
 
       <div className="col-span-2">

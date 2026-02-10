@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BORUSAN OTOMOTİV Premium CRM</title>
 <script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 <style>@keyframes spin{to{transform:rotate(360deg)}}@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}.animate-spin{animation:spin 1s linear infinite}.animate-pulse{animation:pulse 2s cubic-bezier(0.4,0,0.6,1) infinite}</style>
 </head>
 <body>
@@ -30,18 +31,32 @@ window.firebaseModules = { collection, addDoc, updateDoc, deleteDoc, doc, onSnap
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script type="text/babel">
-const{useState,useEffect}=React;const Icon=({path,className="w-5 h-5"})=>(<svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={path}/></svg>);const icons={plus:"M12 4v16m8-8H4",edit:"M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z",trash:"M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16",search:"M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z",phone:"M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z",mail:"M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z",car:"M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z",refresh:"M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15",close:"M6 18L18 6M6 6l12 12",check:"M5 13l4 4L19 7",activity:"M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z",dollar:"M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z",trend:"M13 7h8m0 0v8m0-8l-8 8-4-4-6 6",target:"M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z",download:"M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4",filter:"M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"};
+const{useState,useEffect}=React;const Icon=({path,className="w-5 h-5"})=>(<svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={path}/></svg>);const icons={plus:"M12 4v16m8-8H4",edit:"M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z",trash:"M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16",search:"M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z",phone:"M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z",mail:"M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z",car:"M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z",refresh:"M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15",close:"M6 18L18 6M6 6l12 12",check:"M5 13l4 4L19 7",activity:"M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z",dollar:"M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z",trend:"M13 7h8m0 0v8m0-8l-8 8-4-4-6 6",target:"M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z",download:"M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4",filter:"M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z",sortAsc:"M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12",sortDesc:"M3 4h13M3 8h9m-9 4h9m5-4v12m0 0l-4-4m4 4l4-4",bell:"M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9",settings:"M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"};
 
 function BorusanCRM(){
 const[customers,setCustomers]=useState([]);
-const[searchTerm,setSearchTerm]=useState('');
-const[filterStatus,setFilterStatus]=useState('all');
 const[showForm,setShowForm]=useState(false);
 const[editingId,setEditingId]=useState(null);
 const[loading,setLoading]=useState(false);
 const[syncing,setSyncing]=useState(false);
+const[notificationEnabled,setNotificationEnabled]=useState(false);
+const[pendingNotifications,setPendingNotifications]=useState([]);
+const[showEmailSettings,setShowEmailSettings]=useState(false);
 
-// 🔥 YENİ: Sütun Filtreleri
+// 🔥 E-posta Ayarları
+const[emailSettings,setEmailSettings]=useState({
+  recipientEmail: localStorage.getItem('borusan_email') || '',
+  serviceId: localStorage.getItem('borusan_emailjs_service') || '',
+  templateId: localStorage.getItem('borusan_emailjs_template') || '',
+  publicKey: localStorage.getItem('borusan_emailjs_public') || '',
+  autoSendEnabled: localStorage.getItem('borusan_auto_email') === 'true' || false,
+  lastEmailSent: localStorage.getItem('borusan_last_email') || null
+});
+
+// 🔥 Sıralama
+const[sortConfig,setSortConfig]=useState({key:null,direction:'asc'});
+
+// 🔥 Filtreler
 const[filters,setFilters]=useState({
   name:'',
   contact:'',
@@ -59,6 +74,161 @@ const[formData,setFormData]=useState({name:'',phone:'',email:'',carModel:'',stat
 
 const db=window.firebaseDb;
 const{collection,addDoc,updateDoc,deleteDoc,doc,onSnapshot,serverTimestamp,query,orderBy}=window.firebaseModules;
+
+// 📧 EmailJS Initialize
+useEffect(() => {
+  if(emailSettings.publicKey){
+    emailjs.init(emailSettings.publicKey);
+  }
+}, [emailSettings.publicKey]);
+
+// 📧 E-posta Ayarlarını Kaydet
+const saveEmailSettings = (newSettings) => {
+  setEmailSettings(newSettings);
+  localStorage.setItem('borusan_email', newSettings.recipientEmail);
+  localStorage.setItem('borusan_emailjs_service', newSettings.serviceId);
+  localStorage.setItem('borusan_emailjs_template', newSettings.templateId);
+  localStorage.setItem('borusan_emailjs_public', newSettings.publicKey);
+  localStorage.setItem('borusan_auto_email', newSettings.autoSendEnabled.toString());
+};
+
+// 📧 E-posta Gönder Fonksiyonu
+const sendEmailNotification = async (overdueCustomers, isTest = false) => {
+  if(!emailSettings.serviceId || !emailSettings.templateId || !emailSettings.publicKey || !emailSettings.recipientEmail){
+    alert('⚠️ Lütfen önce e-posta ayarlarını tamamlayın!');
+    return false;
+  }
+
+  try {
+    // E-posta içeriği hazırla
+    const customerList = overdueCustomers.map((customer, index) => {
+      let createdDate = null;
+      if(customer.createdAt){
+        if(typeof customer.createdAt.toDate === 'function'){
+          createdDate = customer.createdAt.toDate();
+        }else if(customer.createdAt.seconds){
+          createdDate = new Date(customer.createdAt.seconds * 1000);
+        }else{
+          createdDate = new Date(customer.createdAt);
+        }
+      }
+      
+      const daysAgo = createdDate ? Math.floor((new Date() - createdDate) / (1000 * 60 * 60 * 24)) : '?';
+      
+      return `${index + 1}. ${customer.name}
+   📞 ${customer.phone}
+   🚗 ${customer.carModel}
+   ⏱️ ${daysAgo} gün önce eklendi
+   💰 Fiyat: ${customer.price || '-'} ₺
+`;
+    }).join('\n');
+
+    const templateParams = {
+      to_email: emailSettings.recipientEmail,
+      customer_count: overdueCustomers.length,
+      customer_list: customerList,
+      date: new Date().toLocaleDateString('tr-TR'),
+      time: new Date().toLocaleTimeString('tr-TR'),
+      is_test: isTest ? 'TEST E-POSTASI - ' : ''
+    };
+
+    await emailjs.send(
+      emailSettings.serviceId,
+      emailSettings.templateId,
+      templateParams
+    );
+
+    if(!isTest){
+      const newSettings = {...emailSettings, lastEmailSent: new Date().toISOString()};
+      saveEmailSettings(newSettings);
+      localStorage.setItem('borusan_last_email', new Date().toISOString());
+    }
+
+    return true;
+  } catch (error) {
+    console.error('E-posta gönderme hatası:', error);
+    alert('❌ E-posta gönderilemedi: ' + error.text);
+    return false;
+  }
+};
+
+// 🔔 Bildirim İzni
+useEffect(()=>{
+  if('Notification' in window){
+    if(Notification.permission === 'granted'){
+      setNotificationEnabled(true);
+    }else if(Notification.permission !== 'denied'){
+      Notification.requestPermission().then(permission=>{
+        if(permission === 'granted'){
+          setNotificationEnabled(true);
+          new Notification('🎉 Borusan CRM Bildirimleri Aktif!',{
+            body:'3 gün geçen teklifler için bildirim alacaksınız.',
+            icon:'🚗'
+          });
+        }
+      });
+    }
+  }
+},[]);
+
+// 🔔 Otomatik Bildirim ve E-posta Kontrolü
+useEffect(()=>{
+  if(customers.length === 0) return;
+
+  const checkInterval = setInterval(()=>{
+    const now = new Date();
+    const threeDaysAgo = new Date(now.getTime() - (3 * 24 * 60 * 60 * 1000));
+    
+    const overdueCustomers = customers.filter(customer => {
+      if(customer.status !== 'Teklif Gönderildi') return false;
+      
+      let createdDate = null;
+      if(customer.createdAt){
+        if(typeof customer.createdAt.toDate === 'function'){
+          createdDate = customer.createdAt.toDate();
+        }else if(customer.createdAt.seconds){
+          createdDate = new Date(customer.createdAt.seconds * 1000);
+        }else{
+          createdDate = new Date(customer.createdAt);
+        }
+      }
+      
+      return createdDate && createdDate < threeDaysAgo;
+    });
+
+    if(overdueCustomers.length > 0){
+      // Browser bildirimi
+      if(notificationEnabled){
+        const newNotifications = overdueCustomers.filter(c => 
+          !pendingNotifications.includes(c.id)
+        );
+
+        if(newNotifications.length > 0){
+          new Notification(`⚠️ ${newNotifications.length} Müşteri Takip Bekliyor!`,{
+            body: `${newNotifications.map(c => c.name).slice(0,3).join(', ')}${newNotifications.length > 3 ? ' ve diğerleri...' : ''} - 3 gün geçti!`,
+            icon: '🚗',
+            tag: 'overdue-customers'
+          });
+
+          setPendingNotifications(prev => [...prev, ...newNotifications.map(c => c.id)]);
+        }
+      }
+
+      // 📧 E-posta gönderimi (günde bir kez)
+      if(emailSettings.autoSendEnabled && emailSettings.recipientEmail){
+        const lastEmailDate = emailSettings.lastEmailSent ? new Date(emailSettings.lastEmailSent) : null;
+        const today = new Date();
+        
+        // Son e-posta bugün gönderilmediyse gönder
+        if(!lastEmailDate || lastEmailDate.toDateString() !== today.toDateString()){
+          sendEmailNotification(overdueCustomers, false);
+        }
+      }
+    }
+  }, 60000); // Her dakika kontrol
+
+  return () => clearInterval(checkInterval);
+}, [customers, notificationEnabled, pendingNotifications, emailSettings]);
 
 useEffect(()=>{
 if(!db)return;
@@ -140,7 +310,7 @@ XLSX.writeFile(wb,'borusan-musteri-sablonu.xlsx');
 };
 
 const exportToExcel=()=>{
-const exportData=filteredCustomers.map((customer,index)=>{
+const exportData=sortedAndFilteredCustomers.map((customer,index)=>{
 let createdDate=null;
 if(customer.createdAt){
 if(typeof customer.createdAt.toDate==='function'){createdDate=customer.createdAt.toDate();}
@@ -156,21 +326,14 @@ const fileName=`borusan-musteriler-${new Date().toLocaleDateString('tr-TR').repl
 XLSX.writeFile(wb,fileName);
 };
 
-// 🔥 GELIŞMIŞ FILTRELEME SİSTEMİ
+// FILTRELEME
 const filteredCustomers=customers.filter(customer=>{
-  // İsim filtresi
   if(filters.name && !customer.name?.toLowerCase().includes(filters.name.toLowerCase())) return false;
-  
-  // İletişim filtresi (telefon veya email)
   if(filters.contact){
     const contactMatch = customer.phone?.includes(filters.contact) || customer.email?.toLowerCase().includes(filters.contact.toLowerCase());
     if(!contactMatch) return false;
   }
-  
-  // Araç filtresi
   if(filters.car && !customer.carModel?.toLowerCase().includes(filters.car.toLowerCase())) return false;
-  
-  // Tarih filtresi
   if(filters.dateFrom || filters.dateTo){
     let createdDate = null;
     if(customer.createdAt){
@@ -190,28 +353,86 @@ const filteredCustomers=customers.filter(customer=>{
       }
     }
   }
-  
-  // Durum filtresi
   if(filters.status!=='all' && customer.status!==filters.status) return false;
-  
-  // Fiyat filtresi
   if(filters.priceMin || filters.priceMax){
     const price = parseFloat(customer.price?.replace(/[^0-9.-]/g,'')) || 0;
     if(filters.priceMin && price < parseFloat(filters.priceMin)) return false;
     if(filters.priceMax && price > parseFloat(filters.priceMax)) return false;
   }
-  
-  // DBS filtresi
   if(filters.dbsMin || filters.dbsMax){
     const dbs = parseFloat(customer.dbsAmount?.replace(/[^0-9.-]/g,'')) || 0;
     if(filters.dbsMin && dbs < parseFloat(filters.dbsMin)) return false;
     if(filters.dbsMax && dbs > parseFloat(filters.dbsMax)) return false;
   }
-  
   return true;
 });
 
-// Filtreleri temizle
+// SIRALAMA
+const handleSort = (key) => {
+  let direction = 'asc';
+  if(sortConfig.key === key && sortConfig.direction === 'asc'){
+    direction = 'desc';
+  }
+  setSortConfig({key, direction});
+};
+
+const sortedAndFilteredCustomers = [...filteredCustomers].sort((a, b) => {
+  if(!sortConfig.key) return 0;
+  let aValue, bValue;
+  switch(sortConfig.key){
+    case 'name':
+      aValue = a.name?.toLowerCase() || '';
+      bValue = b.name?.toLowerCase() || '';
+      break;
+    case 'phone':
+      aValue = a.phone || '';
+      bValue = b.phone || '';
+      break;
+    case 'car':
+      aValue = a.carModel?.toLowerCase() || '';
+      bValue = b.carModel?.toLowerCase() || '';
+      break;
+    case 'date':
+      if(a.createdAt && b.createdAt){
+        if(typeof a.createdAt.toDate === 'function'){
+          aValue = a.createdAt.toDate().getTime();
+        }else if(a.createdAt.seconds){
+          aValue = a.createdAt.seconds * 1000;
+        }else{
+          aValue = new Date(a.createdAt).getTime();
+        }
+        if(typeof b.createdAt.toDate === 'function'){
+          bValue = b.createdAt.toDate().getTime();
+        }else if(b.createdAt.seconds){
+          bValue = b.createdAt.seconds * 1000;
+        }else{
+          bValue = new Date(b.createdAt).getTime();
+        }
+      }else{
+        aValue = 0;
+        bValue = 0;
+      }
+      break;
+    case 'status':
+      aValue = a.status || '';
+      bValue = b.status || '';
+      break;
+    case 'price':
+      aValue = parseFloat(a.price?.replace(/[^0-9.-]/g,'')) || 0;
+      bValue = parseFloat(b.price?.replace(/[^0-9.-]/g,'')) || 0;
+      break;
+    case 'dbs':
+      aValue = parseFloat(a.dbsAmount?.replace(/[^0-9.-]/g,'')) || 0;
+      bValue = parseFloat(b.dbsAmount?.replace(/[^0-9.-]/g,'')) || 0;
+      break;
+    default:
+      return 0;
+  }
+  if(aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
+  if(aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
+  return 0;
+});
+
 const clearFilters = () => {
   setFilters({
     name:'',
@@ -230,83 +451,313 @@ const clearFilters = () => {
 const totalRevenue=customers.filter(c=>c.price).reduce((sum,c)=>sum+(parseFloat(c.price.replace(/[^0-9.-]/g,''))||0),0);
 const totalDBS=customers.filter(c=>c.dbsAmount).reduce((sum,c)=>sum+(parseFloat(c.dbsAmount.replace(/[^0-9.-]/g,''))||0),0);
 
-// Aktif filtre sayısı
 const activeFilterCount = Object.entries(filters).filter(([key, value]) => {
   if(key === 'status') return value !== 'all';
   return value !== '';
 }).length;
 
-return(<div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6"><div className="max-w-7xl mx-auto"><div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl shadow-2xl p-8 mb-6 relative overflow-hidden"><div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full -mr-32 -mt-32"></div><div className="relative"><div className="flex items-center justify-between mb-6"><div><div className="flex items-center gap-3 mb-2"><Icon path={icons.car} className="w-10 h-10 text-white"/><h1 className="text-4xl font-black text-white">BORUSAN OTOMOTİV</h1></div><p className="text-blue-100 text-lg font-medium ml-13">Premium Kiralama CRM</p><div className="flex items-center gap-2 mt-2 ml-13"><div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div><span className="text-blue-100 text-sm">🔥 Gerçek Zamanlı Firebase</span>{syncing&&<span className="text-blue-200 text-xs ml-2">Güncelleniyor...</span>}</div></div><div className="flex gap-3"><input type="file" id="excel-upload" accept=".xlsx,.xls" onChange={handleExcelUpload} className="hidden"/><button onClick={downloadExcelTemplate} className="flex items-center gap-2 bg-purple-600 text-white px-5 py-3 rounded-xl hover:bg-purple-700 transition-all font-bold"><span className="text-lg">📥</span>Şablon İndir</button><button onClick={()=>document.getElementById('excel-upload').click()} disabled={loading} className="flex items-center gap-2 bg-green-600 text-white px-5 py-3 rounded-xl hover:bg-green-700 transition-all font-bold disabled:opacity-50"><span className="text-lg">📊</span>Excel Yükle</button><button onClick={exportToExcel} disabled={filteredCustomers.length===0} className="flex items-center gap-2 bg-teal-600 text-white px-5 py-3 rounded-xl hover:bg-teal-700 transition-all font-bold disabled:opacity-50"><Icon path={icons.download} className="w-5 h-5"/>Listeyi İndir</button><button onClick={()=>setShowForm(!showForm)} className="flex items-center gap-2 bg-white text-blue-600 px-6 py-3 rounded-xl hover:bg-blue-50 transition-all font-bold"><Icon path={icons.plus} className="w-5 h-5"/>Yeni Müşteri</button></div></div><div className="grid grid-cols-4 gap-4"><div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20"><div className="flex items-center gap-3"><div className="bg-blue-500 p-3 rounded-lg"><Icon path={icons.activity} className="w-6 h-6 text-white"/></div><div><div className="text-3xl font-bold text-white">{customers.length}</div><div className="text-blue-100 text-sm">Toplam Müşteri</div></div></div></div><div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20"><div className="flex items-center gap-3"><div className="bg-green-500 p-3 rounded-lg"><Icon path={icons.check} className="w-6 h-6 text-white"/></div><div><div className="text-3xl font-bold text-white">{customers.filter(c=>c.status==='Teslimat').length}</div><div className="text-blue-100 text-sm">Teslimat Aşaması</div></div></div></div><div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20"><div className="flex items-center gap-3"><div className="bg-yellow-500 p-3 rounded-lg"><Icon path={icons.dollar} className="w-6 h-6 text-white"/></div><div><div className="text-2xl font-bold text-white">{totalRevenue.toLocaleString('tr-TR')} ₺</div><div className="text-blue-100 text-sm">Toplam Gelir</div></div></div></div><div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20"><div className="flex items-center gap-3"><div className="bg-indigo-500 p-3 rounded-lg"><Icon path={icons.trend} className="w-6 h-6 text-white"/></div><div><div className="text-2xl font-bold text-white">{totalDBS.toLocaleString('tr-TR')} ₺</div><div className="text-blue-100 text-sm">Toplam DBS</div></div></div></div></div></div></div>
+// 3 Gün Geçmiş Müşteriler
+const overdueCustomers = customers.filter(customer => {
+  if(customer.status !== 'Teklif Gönderildi') return false;
+  let createdDate = null;
+  if(customer.createdAt){
+    if(typeof customer.createdAt.toDate === 'function'){
+      createdDate = customer.createdAt.toDate();
+    }else if(customer.createdAt.seconds){
+      createdDate = new Date(customer.createdAt.seconds * 1000);
+    }else{
+      createdDate = new Date(customer.createdAt);
+    }
+  }
+  if(!createdDate) return false;
+  const now = new Date();
+  const threeDaysAgo = new Date(now.getTime() - (3 * 24 * 60 * 60 * 1000));
+  return createdDate < threeDaysAgo;
+});
 
+const SortButton = ({column, label}) => (
+  <button 
+    onClick={() => handleSort(column)}
+    className="flex items-center gap-1 hover:text-blue-600 transition-colors"
+  >
+    <span>{label}</span>
+    {sortConfig.key === column ? (
+      <Icon 
+        path={sortConfig.direction === 'asc' ? icons.sortAsc : icons.sortDesc} 
+        className="w-4 h-4"
+      />
+    ) : (
+      <div className="w-4 h-4 opacity-30">
+        <Icon path={icons.sortAsc} className="w-4 h-4"/>
+      </div>
+    )}
+  </button>
+);
+
+return(<div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6"><div className="max-w-7xl mx-auto">
+
+{/* HEADER */}
+<div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl shadow-2xl p-8 mb-6 relative overflow-hidden"><div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full -mr-32 -mt-32"></div><div className="relative"><div className="flex items-center justify-between mb-6"><div><div className="flex items-center gap-3 mb-2"><Icon path={icons.car} className="w-10 h-10 text-white"/><h1 className="text-4xl font-black text-white">BORUSAN OTOMOTİV</h1></div><p className="text-blue-100 text-lg font-medium ml-13">Premium Kiralama CRM</p><div className="flex items-center gap-3 mt-2 ml-13">
+<div className="flex items-center gap-2">
+<div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+<span className="text-blue-100 text-sm">🔥 Firebase</span>
+</div>
+{notificationEnabled && (
+<div className="flex items-center gap-2">
+<Icon path={icons.bell} className="w-4 h-4 text-green-200"/>
+<span className="text-green-200 text-sm">Bildirim</span>
+</div>
+)}
+{emailSettings.autoSendEnabled && emailSettings.recipientEmail && (
+<div className="flex items-center gap-2">
+<Icon path={icons.mail} className="w-4 h-4 text-yellow-200"/>
+<span className="text-yellow-200 text-sm">E-posta Aktif</span>
+</div>
+)}
+</div></div><div className="flex gap-3">
+<button onClick={()=>setShowEmailSettings(!showEmailSettings)} className="flex items-center gap-2 bg-indigo-600 text-white px-5 py-3 rounded-xl hover:bg-indigo-700 transition-all font-bold"><Icon path={icons.settings} className="w-5 h-5"/>E-posta Ayarları</button>
+<input type="file" id="excel-upload" accept=".xlsx,.xls" onChange={handleExcelUpload} className="hidden"/><button onClick={downloadExcelTemplate} className="flex items-center gap-2 bg-purple-600 text-white px-5 py-3 rounded-xl hover:bg-purple-700 transition-all font-bold"><span className="text-lg">📥</span>Şablon</button><button onClick={()=>document.getElementById('excel-upload').click()} disabled={loading} className="flex items-center gap-2 bg-green-600 text-white px-5 py-3 rounded-xl hover:bg-green-700 transition-all font-bold disabled:opacity-50"><span className="text-lg">📊</span>Excel</button><button onClick={exportToExcel} disabled={sortedAndFilteredCustomers.length===0} className="flex items-center gap-2 bg-teal-600 text-white px-5 py-3 rounded-xl hover:bg-teal-700 transition-all font-bold disabled:opacity-50"><Icon path={icons.download} className="w-5 h-5"/>İndir</button><button onClick={()=>setShowForm(!showForm)} className="flex items-center gap-2 bg-white text-blue-600 px-6 py-3 rounded-xl hover:bg-blue-50 transition-all font-bold"><Icon path={icons.plus} className="w-5 h-5"/>Yeni</button></div></div>
+
+{/* İSTATİSTİKLER */}
+<div className="grid grid-cols-4 gap-4"><div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20"><div className="flex items-center gap-3"><div className="bg-blue-500 p-3 rounded-lg"><Icon path={icons.activity} className="w-6 h-6 text-white"/></div><div><div className="text-3xl font-bold text-white">{customers.length}</div><div className="text-blue-100 text-sm">Toplam Müşteri</div></div></div></div><div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20"><div className="flex items-center gap-3"><div className="bg-green-500 p-3 rounded-lg"><Icon path={icons.check} className="w-6 h-6 text-white"/></div><div><div className="text-3xl font-bold text-white">{customers.filter(c=>c.status==='Teslimat').length}</div><div className="text-blue-100 text-sm">Teslimat</div></div></div></div><div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20"><div className="flex items-center gap-3"><div className="bg-yellow-500 p-3 rounded-lg"><Icon path={icons.dollar} className="w-6 h-6 text-white"/></div><div><div className="text-2xl font-bold text-white">{totalRevenue.toLocaleString('tr-TR')} ₺</div><div className="text-blue-100 text-sm">Gelir</div></div></div></div><div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20"><div className="flex items-center gap-3"><div className="bg-indigo-500 p-3 rounded-lg"><Icon path={icons.trend} className="w-6 h-6 text-white"/></div><div><div className="text-2xl font-bold text-white">{totalDBS.toLocaleString('tr-TR')} ₺</div><div className="text-blue-100 text-sm">DBS</div></div></div></div></div></div></div>
+
+{/* 📧 E-POSTA AYARLARI */}
+{showEmailSettings && (
+  <div className="bg-white rounded-2xl shadow-2xl p-8 mb-6">
+    <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center gap-3">
+        <Icon path={icons.settings} className="w-8 h-8 text-blue-600"/>
+        <h2 className="text-2xl font-bold text-slate-800">📧 E-posta Bildirim Ayarları</h2>
+      </div>
+      <button onClick={()=>setShowEmailSettings(false)} className="text-slate-400 hover:text-slate-600">
+        <Icon path={icons.close} className="w-6 h-6"/>
+      </button>
+    </div>
+
+    <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6">
+      <h3 className="font-bold text-blue-900 mb-2">ℹ️ Kurulum Adımları:</h3>
+      <ol className="text-sm text-blue-800 space-y-1 ml-4 list-decimal">
+        <li><a href="https://www.emailjs.com/" target="_blank" className="underline font-semibold">EmailJS.com</a>'a gidin ve ücretsiz hesap oluşturun</li>
+        <li>Email Services'den Gmail/Outlook bağlayın</li>
+        <li>Email Templates bölümünden şu şablonu oluşturun:</li>
+      </ol>
+      <div className="bg-white p-3 rounded mt-3 font-mono text-xs">
+        <div className="text-slate-600 mb-2">Template İçeriği:</div>
+        <code className="text-slate-800">
+{`Merhaba,
+
+{{is_test}}{{customer_count}} müşteri 3 gündür "Teklif Gönderildi" aşamasında bekliyor:
+
+{{customer_list}}
+
+Tarih: {{date}} - {{time}}
+
+---
+Borusan CRM Sistemi`}
+        </code>
+      </div>
+      <p className="text-xs text-blue-700 mt-2">4. Account → API Keys bölümünden bilgileri aşağıya girin</p>
+    </div>
+
+    <div className="grid grid-cols-2 gap-6">
+      <div>
+        <label className="block text-sm font-bold text-slate-700 mb-2">E-posta Adresiniz *</label>
+        <input 
+          type="email"
+          value={emailSettings.recipientEmail}
+          onChange={(e)=>setEmailSettings({...emailSettings, recipientEmail: e.target.value})}
+          className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500"
+          placeholder="ornek@email.com"
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-bold text-slate-700 mb-2">Service ID *</label>
+        <input 
+          type="text"
+          value={emailSettings.serviceId}
+          onChange={(e)=>setEmailSettings({...emailSettings, serviceId: e.target.value})}
+          className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500"
+          placeholder="service_xxxxxxx"
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-bold text-slate-700 mb-2">Template ID *</label>
+        <input 
+          type="text"
+          value={emailSettings.templateId}
+          onChange={(e)=>setEmailSettings({...emailSettings, templateId: e.target.value})}
+          className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500"
+          placeholder="template_xxxxxxx"
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-bold text-slate-700 mb-2">Public Key *</label>
+        <input 
+          type="text"
+          value={emailSettings.publicKey}
+          onChange={(e)=>setEmailSettings({...emailSettings, publicKey: e.target.value})}
+          className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500"
+          placeholder="xxxxxxxxxxxxxxxxxx"
+        />
+      </div>
+
+      <div className="col-span-2">
+        <label className="flex items-center gap-3 cursor-pointer">
+          <input 
+            type="checkbox"
+            checked={emailSettings.autoSendEnabled}
+            onChange={(e)=>setEmailSettings({...emailSettings, autoSendEnabled: e.target.checked})}
+            className="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+          />
+          <span className="text-sm font-bold text-slate-700">
+            🔄 Otomatik e-posta gönderimini aktif et (günde 1 kez)
+          </span>
+        </label>
+        {emailSettings.lastEmailSent && (
+          <p className="text-xs text-slate-500 mt-2 ml-8">
+            Son e-posta: {new Date(emailSettings.lastEmailSent).toLocaleString('tr-TR')}
+          </p>
+        )}
+      </div>
+
+      <div className="col-span-2 flex gap-4">
+        <button 
+          onClick={()=>{
+            saveEmailSettings(emailSettings);
+            alert('✅ E-posta ayarları kaydedildi!');
+          }}
+          className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-xl hover:from-blue-700 hover:to-indigo-700 font-bold text-lg"
+        >
+          💾 Kaydet
+        </button>
+        <button 
+          onClick={async()=>{
+            if(overdueCustomers.length === 0){
+              alert('⚠️ Test için en az 1 müşteri "Teklif Gönderildi" durumunda olmalı!');
+              return;
+            }
+            const success = await sendEmailNotification(overdueCustomers, true);
+            if(success){
+              alert('✅ Test e-postası gönderildi! Gelen kutunuzu kontrol edin.');
+            }
+          }}
+          className="flex-1 bg-green-600 text-white px-8 py-4 rounded-xl hover:bg-green-700 font-bold text-lg"
+        >
+          📧 Test E-postası Gönder
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
+{/* BİLDİRİM BANNER */}
+{overdueCustomers.length > 0 && (
+  <div className="bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl shadow-lg p-6 mb-6 text-white">
+    <div className="flex items-center justify-between">
+      <div className="flex items-center gap-4">
+        <div className="bg-white/20 p-3 rounded-lg animate-pulse">
+          <Icon path={icons.bell} className="w-8 h-8"/>
+        </div>
+        <div>
+          <h3 className="text-xl font-bold mb-1">⚠️ {overdueCustomers.length} Müşteri Takip Bekliyor!</h3>
+          <p className="text-orange-100">3 gündür "Teklif Gönderildi" aşamasında</p>
+        </div>
+      </div>
+      <div className="flex gap-3">
+        <button 
+          onClick={async()=>{
+            const success = await sendEmailNotification(overdueCustomers, false);
+            if(success) alert('✅ E-posta gönderildi!');
+          }}
+          className="flex items-center gap-2 bg-white text-orange-600 px-6 py-3 rounded-xl font-bold hover:bg-orange-50"
+        >
+          <Icon path={icons.mail} className="w-5 h-5"/>
+          E-posta Gönder
+        </button>
+        <button 
+          onClick={() => setFilters({...filters, status: 'Teklif Gönderildi'})}
+          className="bg-white text-orange-600 px-6 py-3 rounded-xl font-bold hover:bg-orange-50"
+        >
+          Göster
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
+{/* FORM */}
 {showForm&&(<div className="bg-white rounded-2xl shadow-2xl p-8 mb-6"><div className="flex items-center justify-between mb-6"><h2 className="text-2xl font-bold text-slate-800">⚡ {editingId?'Müşteri Düzenle':'Yeni Müşteri Ekle'}</h2><button onClick={resetForm} className="text-slate-400 hover:text-slate-600"><Icon path={icons.close} className="w-6 h-6"/></button></div><div className="grid grid-cols-2 gap-6"><div><label className="block text-sm font-bold text-slate-700 mb-2">Müşteri Adı <span className="text-red-500">*</span></label><input type="text" value={formData.name} onChange={(e)=>setFormData({...formData,name:e.target.value})} className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500" placeholder="Müşteri adını girin"/></div><div><label className="block text-sm font-bold text-slate-700 mb-2">Telefon <span className="text-red-500">*</span></label><input type="tel" value={formData.phone} onChange={(e)=>setFormData({...formData,phone:e.target.value})} className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500" placeholder="0555 123 45 67"/></div><div><label className="block text-sm font-bold text-slate-700 mb-2">E-posta</label><input type="email" value={formData.email} onChange={(e)=>setFormData({...formData,email:e.target.value})} className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500" placeholder="musteri@email.com"/></div><div><label className="block text-sm font-bold text-slate-700 mb-2">Araç Modeli <span className="text-red-500">*</span></label><input type="text" value={formData.carModel} onChange={(e)=>setFormData({...formData,carModel:e.target.value})} className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500" placeholder="BMW 5 Serisi..."/></div><div><label className="block text-sm font-bold text-slate-700 mb-2">Durum</label><select value={formData.status} onChange={(e)=>setFormData({...formData,status:e.target.value})} className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500">{statusOptions.map(s=><option key={s} value={s}>{s}</option>)}</select></div><div><label className="block text-sm font-bold text-slate-700 mb-2">Fiyat (₺)</label><input type="text" value={formData.price} onChange={(e)=>setFormData({...formData,price:e.target.value})} className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500" placeholder="50000"/></div><div className="col-span-2"><label className="block text-sm font-bold text-slate-700 mb-2">DBS Miktarı (₺)</label><input type="text" value={formData.dbsAmount} onChange={(e)=>setFormData({...formData,dbsAmount:e.target.value})} className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500" placeholder="DBS miktarı"/></div><div className="col-span-2"><label className="block text-sm font-bold text-slate-700 mb-2">Notlar</label><textarea value={formData.notes} onChange={(e)=>setFormData({...formData,notes:e.target.value})} rows="3" className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500" placeholder="Notlar..."></textarea></div><div className="col-span-2 flex gap-4 mt-4"><button onClick={handleSubmit} disabled={loading} className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-xl hover:from-blue-700 hover:to-indigo-700 font-bold text-lg disabled:opacity-50">{loading?'Kaydediliyor...':(editingId?'✓ Güncelle':'+ Kaydet')}</button><button onClick={resetForm} className="flex-1 bg-slate-200 text-slate-700 px-8 py-4 rounded-xl hover:bg-slate-300 font-bold text-lg">İptal</button></div></div></div>)}
 
-{/* 🔥 FİLTRE KONTROL PANELİ */}
+{/* FİLTRE PANELİ */}
 <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
   <div className="flex items-center justify-between mb-4">
     <div className="flex items-center gap-3">
       <Icon path={icons.filter} className="w-6 h-6 text-blue-600"/>
-      <h3 className="text-xl font-bold text-slate-800">Gelişmiş Filtreler</h3>
+      <h3 className="text-xl font-bold text-slate-800">Filtreler</h3>
       {activeFilterCount > 0 && (
         <span className="bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full">
-          {activeFilterCount} Filtre Aktif
+          {activeFilterCount}
         </span>
       )}
     </div>
     {activeFilterCount > 0 && (
       <button 
         onClick={clearFilters}
-        className="flex items-center gap-2 bg-red-100 text-red-600 px-4 py-2 rounded-lg hover:bg-red-200 transition-all font-bold text-sm"
+        className="flex items-center gap-2 bg-red-100 text-red-600 px-4 py-2 rounded-lg hover:bg-red-200 font-bold text-sm"
       >
         <Icon path={icons.close} className="w-4 h-4"/>
-        Filtreleri Temizle
+        Temizle
       </button>
     )}
   </div>
-  
-  <div className="text-sm text-slate-600 mb-2">
-    {filteredCustomers.length === customers.length 
-      ? `Tüm müşteriler gösteriliyor (${customers.length})` 
-      : `${filteredCustomers.length} / ${customers.length} müşteri gösteriliyor`}
+  <div className="text-sm text-slate-600">
+    {sortedAndFilteredCustomers.length === customers.length 
+      ? `${customers.length} müşteri` 
+      : `${sortedAndFilteredCustomers.length} / ${customers.length}`}
   </div>
 </div>
 
+{/* TABLO */}
 <div className="bg-white rounded-2xl shadow-2xl overflow-hidden"><div className="overflow-x-auto"><table className="w-full">
 <thead className="bg-gradient-to-r from-slate-50 to-slate-100">
   <tr>
     <th className="px-4 py-3 text-center text-xs font-black text-slate-700 uppercase w-20">Sıra</th>
     <th className="px-6 py-3 text-left text-xs font-black text-slate-700 uppercase">
-      <div className="mb-2">👤 Müşteri</div>
+      <SortButton column="name" label="👤 Müşteri"/>
       <input 
         type="text"
         value={filters.name}
         onChange={(e)=>setFilters({...filters,name:e.target.value})}
-        placeholder="İsim ara..."
-        className="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 font-normal"
+        placeholder="İsim..."
+        className="w-full px-3 py-2 mt-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 font-normal"
       />
     </th>
     <th className="px-6 py-3 text-left text-xs font-black text-slate-700 uppercase">
-      <div className="mb-2">📞 İletişim</div>
+      <SortButton column="phone" label="📞 İletişim"/>
       <input 
         type="text"
         value={filters.contact}
         onChange={(e)=>setFilters({...filters,contact:e.target.value})}
-        placeholder="Tel/Email ara..."
-        className="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 font-normal"
+        placeholder="Tel/Email..."
+        className="w-full px-3 py-2 mt-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 font-normal"
       />
     </th>
     <th className="px-6 py-3 text-left text-xs font-black text-slate-700 uppercase">
-      <div className="mb-2">🚗 Araç</div>
+      <SortButton column="car" label="🚗 Araç"/>
       <input 
         type="text"
         value={filters.car}
         onChange={(e)=>setFilters({...filters,car:e.target.value})}
-        placeholder="Model ara..."
-        className="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 font-normal"
+        placeholder="Model..."
+        className="w-full px-3 py-2 mt-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 font-normal"
       />
     </th>
     <th className="px-6 py-3 text-left text-xs font-black text-slate-700 uppercase">
-      <div className="mb-2">📅 Tarih</div>
-      <div className="space-y-1">
+      <SortButton column="date" label="📅 Tarih"/>
+      <div className="space-y-1 mt-2">
         <input 
           type="date"
           value={filters.dateFrom}
@@ -322,66 +773,87 @@ return(<div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-8
       </div>
     </th>
     <th className="px-6 py-3 text-left text-xs font-black text-slate-700 uppercase">
-      <div className="mb-2">📊 Durum</div>
+      <SortButton column="status" label="📊 Durum"/>
       <select
         value={filters.status}
         onChange={(e)=>setFilters({...filters,status:e.target.value})}
-        className="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 font-normal"
+        className="w-full px-3 py-2 mt-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 font-normal"
       >
         <option value="all">Tümü</option>
         {statusOptions.map(s=><option key={s} value={s}>{s}</option>)}
       </select>
     </th>
     <th className="px-6 py-3 text-left text-xs font-black text-slate-700 uppercase">
-      <div className="mb-2">💰 Fiyat</div>
-      <div className="space-y-1">
+      <SortButton column="price" label="💰 Fiyat"/>
+      <div className="space-y-1 mt-2">
         <input 
           type="number"
           value={filters.priceMin}
           onChange={(e)=>setFilters({...filters,priceMin:e.target.value})}
-          placeholder="Min ₺"
+          placeholder="Min"
           className="w-full px-2 py-1 text-xs border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 font-normal"
         />
         <input 
           type="number"
           value={filters.priceMax}
           onChange={(e)=>setFilters({...filters,priceMax:e.target.value})}
-          placeholder="Max ₺"
+          placeholder="Max"
           className="w-full px-2 py-1 text-xs border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 font-normal"
         />
       </div>
     </th>
     <th className="px-6 py-3 text-left text-xs font-black text-slate-700 uppercase">
-      <div className="mb-2">💎 DBS</div>
-      <div className="space-y-1">
+      <SortButton column="dbs" label="💎 DBS"/>
+      <div className="space-y-1 mt-2">
         <input 
           type="number"
           value={filters.dbsMin}
           onChange={(e)=>setFilters({...filters,dbsMin:e.target.value})}
-          placeholder="Min ₺"
+          placeholder="Min"
           className="w-full px-2 py-1 text-xs border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 font-normal"
         />
         <input 
           type="number"
           value={filters.dbsMax}
           onChange={(e)=>setFilters({...filters,dbsMax:e.target.value})}
-          placeholder="Max ₺"
+          placeholder="Max"
           className="w-full px-2 py-1 text-xs border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 font-normal"
         />
       </div>
     </th>
-    <th className="px-6 py-3 text-left text-xs font-black text-slate-700 uppercase">⚙️ İşlemler</th>
+    <th className="px-6 py-3 text-left text-xs font-black text-slate-700 uppercase">⚙️</th>
   </tr>
 </thead>
 <tbody className="divide-y">
-{filteredCustomers.length===0?(<tr><td colSpan="9" className="px-6 py-16 text-center"><div className="flex flex-col items-center gap-4"><Icon path={icons.activity} className="w-16 h-16 text-slate-300"/><p className="text-slate-500 text-lg">{syncing?'Firebase bağlanıyor...':(activeFilterCount > 0 ? 'Filtre kriterleriyle eşleşen müşteri bulunamadı.' : 'Henüz müşteri yok. Hemen ekleyin!')}</p></div></td></tr>):(filteredCustomers.map((customer,index)=>{
+{sortedAndFilteredCustomers.length===0?(<tr><td colSpan="9" className="px-6 py-16 text-center"><div className="flex flex-col items-center gap-4"><Icon path={icons.activity} className="w-16 h-16 text-slate-300"/><p className="text-slate-500 text-lg">{syncing?'Bağlanıyor...':(activeFilterCount > 0 ? 'Sonuç yok' : 'Müşteri yok')}</p></div></td></tr>):(sortedAndFilteredCustomers.map((customer,index)=>{
 let createdDate=null;
 if(customer.createdAt){
 if(typeof customer.createdAt.toDate==='function'){createdDate=customer.createdAt.toDate();}
 else if(customer.createdAt.seconds){createdDate=new Date(customer.createdAt.seconds*1000);}
 else{createdDate=new Date(customer.createdAt);}
 }
-return(<tr key={customer.id} className="hover:bg-blue-50 transition-colors"><td className="px-4 py-3 text-center"><div className="inline-flex items-center justify-center w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 text-white rounded-full font-black text-sm shadow-md">{index+1}</div></td><td className="px-6 py-4"><div className="font-bold text-slate-900 text-lg">{customer.name}</div>{customer.notes&&<div className="text-sm text-slate-500 italic">{customer.notes.slice(0,60)}...</div>}</td><td className="px-6 py-4"><div className="flex items-center gap-2 text-slate-700"><Icon path={icons.phone} className="w-4 h-4 text-blue-500"/>{customer.phone}</div>{customer.email&&(<div className="flex items-center gap-2 text-slate-600 text-sm mt-1"><Icon path={icons.mail} className="w-4 h-4"/>{customer.email}</div>)}</td><td className="px-6 py-4"><div className="flex items-center gap-2 font-bold text-slate-900"><Icon path={icons.car} className="w-5 h-5 text-indigo-500"/>{customer.carModel}</div></td><td className="px-6 py-4">{createdDate?(<div className="text-sm"><div className="font-semibold text-slate-900 flex items-center gap-1"><span>📅</span>{createdDate.toLocaleDateString('tr-TR',{day:'2-digit',month:'2-digit',year:'numeric'})}</div><div className="text-slate-600 flex items-center gap-1 mt-1"><span>🕐</span>{createdDate.toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'})}</div></div>):(<span className="text-slate-400 text-sm">-</span>)}</td><td className="px-6 py-4"><span className={`inline-flex px-4 py-2 rounded-full font-bold text-sm ${statusConfig[customer.status]?.bgLight} ${statusConfig[customer.status]?.textColor}`}>{customer.status}</span></td><td className="px-6 py-4"><div className="text-lg font-bold text-green-600">{customer.price?`${parseFloat(customer.price).toLocaleString('tr-TR')} ₺`:'-'}</div></td><td className="px-6 py-4"><div className="text-lg font-bold text-purple-600">{customer.dbsAmount?`${parseFloat(customer.dbsAmount).toLocaleString('tr-TR')} ₺`:'-'}</div></td><td className="px-6 py-4"><div className="flex gap-2"><button onClick={()=>handleEdit(customer)} className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg"><Icon path={icons.edit} className="w-5 h-5"/></button><button onClick={()=>handleDelete(customer.id)} className="p-2 text-red-600 hover:bg-red-100 rounded-lg"><Icon path={icons.trash} className="w-5 h-5"/></button></div></td></tr>)}))}</tbody></table></div></div></div></div>);}
+
+const isOverdue = () => {
+  if(customer.status !== 'Teklif Gönderildi' || !createdDate) return false;
+  const now = new Date();
+  const threeDaysAgo = new Date(now.getTime() - (3 * 24 * 60 * 60 * 1000));
+  return createdDate < threeDaysAgo;
+};
+
+return(<tr key={customer.id} className={`hover:bg-blue-50 transition-colors ${isOverdue() ? 'bg-orange-50' : ''}`}>
+<td className="px-4 py-3 text-center">
+  <div className={`inline-flex items-center justify-center w-10 h-10 ${isOverdue() ? 'bg-gradient-to-br from-orange-500 to-red-600' : 'bg-gradient-to-br from-blue-500 to-indigo-600'} text-white rounded-full font-black text-sm shadow-md`}>
+    {index+1}
+  </div>
+</td>
+<td className="px-6 py-4">
+  <div className="font-bold text-slate-900 text-lg flex items-center gap-2">
+    {customer.name}
+    {isOverdue() && <span className="text-xs bg-red-500 text-white px-2 py-1 rounded-full animate-pulse">3+</span>}
+  </div>
+  {customer.notes&&<div className="text-sm text-slate-500 italic">{customer.notes.slice(0,60)}...</div>}
+</td>
+<td className="px-6 py-4"><div className="flex items-center gap-2 text-slate-700"><Icon path={icons.phone} className="w-4 h-4 text-blue-500"/>{customer.phone}</div>{customer.email&&(<div className="flex items-center gap-2 text-slate-600 text-sm mt-1"><Icon path={icons.mail} className="w-4 h-4"/>{customer.email}</div>)}</td><td className="px-6 py-4"><div className="flex items-center gap-2 font-bold text-slate-900"><Icon path={icons.car} className="w-5 h-5 text-indigo-500"/>{customer.carModel}</div></td><td className="px-6 py-4">{createdDate?(<div className="text-sm"><div className="font-semibold text-slate-900">{createdDate.toLocaleDateString('tr-TR')}</div><div className="text-slate-600 text-xs">{createdDate.toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'})}</div></div>):'-'}</td><td className="px-6 py-4"><span className={`inline-flex px-3 py-1 rounded-full font-bold text-xs ${statusConfig[customer.status]?.bgLight} ${statusConfig[customer.status]?.textColor}`}>{customer.status}</span></td><td className="px-6 py-4"><div className="font-bold text-green-600">{customer.price?`${parseFloat(customer.price).toLocaleString('tr-TR')} ₺`:'-'}</div></td><td className="px-6 py-4"><div className="font-bold text-purple-600">{customer.dbsAmount?`${parseFloat(customer.dbsAmount).toLocaleString('tr-TR')} ₺`:'-'}</div></td><td className="px-6 py-4"><div className="flex gap-2"><button onClick={()=>handleEdit(customer)} className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg"><Icon path={icons.edit} className="w-5 h-5"/></button><button onClick={()=>handleDelete(customer.id)} className="p-2 text-red-600 hover:bg-red-100 rounded-lg"><Icon path={icons.trash} className="w-5 h-5"/></button></div></td></tr>)}))}</tbody></table></div></div></div></div>);}
 
 const root=ReactDOM.createRoot(document.getElementById('root'));root.render(<BorusanCRM/>);
 </script>

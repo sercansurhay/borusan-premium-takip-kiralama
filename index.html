@@ -660,13 +660,15 @@ Borusan CRM Sistemi`}
         </button>
         <button 
           onClick={async()=>{
-            if(overdueCustomers.length === 0){
+            // Test için tüm "Teklif Gönderildi" müşterilerini gönder (3 gün beklemeden)
+            const testCustomers = customers.filter(c => c.status === 'Teklif Gönderildi');
+            if(testCustomers.length === 0){
               alert('⚠️ Test için en az 1 müşteri "Teklif Gönderildi" durumunda olmalı!');
               return;
             }
-            const success = await sendEmailNotification(overdueCustomers, true);
+            const success = await sendEmailNotification(testCustomers, true);
             if(success){
-              alert('✅ Test e-postası gönderildi! Gelen kutunuzu kontrol edin.');
+              alert(`✅ Test e-postası gönderildi! (${testCustomers.length} müşteri)\n\nGelen kutunuzu kontrol edin.`);
             }
           }}
           className="flex-1 bg-green-600 text-white px-8 py-4 rounded-xl hover:bg-green-700 font-bold text-lg"

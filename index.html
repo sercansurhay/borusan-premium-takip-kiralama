@@ -718,14 +718,29 @@ function BorusanCRM() {
       return;
     }
     
-    // Dosya uzantısını kontrol et
+    // Debug için dosya bilgilerini konsola yazdır
+    console.log('📄 Dosya bilgileri:', {
+      name: file.name,
+      type: file.type,
+      size: file.size
+    });
+    
+    // Dosya uzantısını kontrol et - çok esnek kontrol
     const fileName = file.name.toLowerCase();
-    const isPdf = fileName.endsWith('.pdf') || file.type === 'application/pdf' || file.type === 'application/x-pdf';
+    const isPdf = fileName.endsWith('.pdf') || 
+                  file.type === 'application/pdf' || 
+                  file.type === 'application/x-pdf' ||
+                  file.type.includes('pdf');
     
     if (!isPdf) {
-      alert('⚠️ Sadece PDF dosyası yükleyebilirsiniz! (Seçilen: ' + file.type + ')');
+      alert('⚠️ Sadece PDF dosyası yükleyebilirsiniz!\n\n' +
+            'Dosya: ' + file.name + '\n' +
+            'Tip: ' + (file.type || 'bilinmiyor') + '\n\n' +
+            'Lütfen .pdf uzantılı bir dosya seçin.');
       return;
     }
+    
+    console.log('✅ PDF kontrolü başarılı, yükleme başlıyor...');
 
     setPdfUploading(true);
     try {
@@ -753,9 +768,11 @@ function BorusanCRM() {
       });
 
       setPdfUrl(url);
+      console.log('✅ PDF başarıyla yüklendi! URL:', url);
       alert('✅ PDF başarıyla yüklendi!');
     } catch (e) {
-      alert('❌ PDF yükleme hatası: ' + e.message);
+      console.error('❌ PDF yükleme hatası:', e);
+      alert('❌ PDF yükleme hatası:\n\n' + e.message + '\n\nFirebase ayarlarınızı kontrol edin.');
     }
     setPdfUploading(false);
   };

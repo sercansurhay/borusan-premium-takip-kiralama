@@ -14,12 +14,30 @@
     --gold: #c9a84c;
     --gold-light: #e8c96a;
     --gold-dim: rgba(201,168,76,0.15);
+  }
+
+  /* 🌙 DARK THEME (18:00 - 06:00) */
+  body.theme-dark {
     --carbon: #0a0a0f;
     --panel: #11111a;
     --panel2: #16161f;
     --border: rgba(201,168,76,0.2);
     --text: #d4d4e0;
     --text-dim: #6b6b80;
+    --grid-opacity: 0.03;
+    --glow-opacity: 0.06;
+  }
+
+  /* ☀️ LIGHT THEME (06:00 - 18:00) */
+  body.theme-light {
+    --carbon: #f8f7f4;
+    --panel: #ffffff;
+    --panel2: #fafaf8;
+    --border: rgba(201,168,76,0.25);
+    --text: #2c2c3a;
+    --text-dim: #6b6b80;
+    --grid-opacity: 0.04;
+    --glow-opacity: 0.03;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -31,6 +49,7 @@
     font-size: 15px;
     min-height: 100vh;
     overflow-x: hidden;
+    transition: background-color 0.5s ease, color 0.5s ease;
   }
 
   /* Background grid */
@@ -39,11 +58,12 @@
     position: fixed;
     inset: 0;
     background-image:
-      linear-gradient(rgba(201,168,76,0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(201,168,76,0.03) 1px, transparent 1px);
+      linear-gradient(rgba(201,168,76,var(--grid-opacity)) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(201,168,76,var(--grid-opacity)) 1px, transparent 1px);
     background-size: 40px 40px;
     pointer-events: none;
     z-index: 0;
+    transition: opacity 0.5s ease;
   }
 
   /* Glow top-left */
@@ -54,9 +74,10 @@
     left: -200px;
     width: 600px;
     height: 600px;
-    background: radial-gradient(circle, rgba(201,168,76,0.06) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(201,168,76,var(--glow-opacity)) 0%, transparent 70%);
     pointer-events: none;
     z-index: 0;
+    transition: opacity 0.5s ease;
   }
 
   #root { position: relative; z-index: 1; }
@@ -125,7 +146,7 @@
 
   .crm-input::placeholder { color: var(--text-dim); font-size: 13px; }
 
-  select.crm-input option { background: #1a1a25; color: var(--text); }
+  select.crm-input option { background: var(--panel); color: var(--text); }
 
   /* Button */
   .btn-gold {
@@ -158,7 +179,8 @@
     letter-spacing: 0.08em;
     text-transform: uppercase;
     padding: 10px 16px;
-    border: 1px solid rgba(255,255,255,0.08);
+    border: 1px solid;
+    border-color: var(--border);
     cursor: pointer;
     transition: all 0.2s;
     border-radius: 2px;
@@ -169,6 +191,36 @@
 
   .btn-ghost:hover { border-color: var(--gold); color: var(--gold); background: var(--gold-dim); }
   .btn-ghost:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  /* Light theme adjustments */
+  .theme-light .btn-ghost {
+    border-color: rgba(201,168,76,0.3);
+  }
+  
+  .theme-light .btn-ghost:hover {
+    background: rgba(201,168,76,0.08);
+  }
+
+  .theme-light .panel {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+
+  .theme-light .stat-card:hover {
+    box-shadow: 0 4px 12px rgba(201,168,76,0.15);
+  }
+
+  .theme-light .crm-table th {
+    background: rgba(201,168,76,0.08);
+  }
+
+  .theme-light .crm-table tr:hover td {
+    background: rgba(201,168,76,0.04);
+  }
+
+  .theme-light .row-index {
+    border-color: rgba(201,168,76,0.3);
+    color: var(--text);
+  }
 
   .btn-danger {
     background: transparent;
@@ -281,7 +333,7 @@
 
   .th-filter:focus { border-color: var(--gold); background: rgba(201,168,76,0.04); }
   .th-filter::placeholder { color: var(--text-dim); }
-  select.th-filter option { background: #1a1a25; }
+  select.th-filter option { background: var(--panel); }
 
   /* Overdue badge */
   .badge-overdue {
@@ -467,6 +519,23 @@ function BorusanCRM() {
   const [syncing, setSyncing] = useState(false);
   const [showEmailSettings, setShowEmailSettings] = useState(false);
   const [notifEnabled, setNotifEnabled] = useState(false);
+  const [currentTheme, setCurrentTheme] = useState('dark');
+
+  // ☀️🌙 AUTO THEME SWITCHER
+  useEffect(() => {
+    const applyTheme = () => {
+      const hour = new Date().getHours();
+      const theme = (hour >= 6 && hour < 18) ? 'light' : 'dark';
+      document.body.className = `theme-${theme}`;
+      setCurrentTheme(theme);
+    };
+
+    applyTheme(); // İlk yüklemede
+
+    // Her dakika kontrol et
+    const interval = setInterval(applyTheme, 60000);
+    return () => clearInterval(interval);
+  }, []);
 
   const [emailSettings, setEmailSettings] = useState({
     recipientEmail: localStorage.getItem('borusan_email') || '',
@@ -720,6 +789,9 @@ function BorusanCRM() {
               <span className="dot-live"></span>
               <span className="mono" style={{ fontSize: '10px', color: 'var(--text-dim)' }}>
                 {syncing ? 'SYNCING...' : 'LIVE'}
+              </span>
+              <span className="mono" style={{ fontSize: '10px', color: 'var(--text-dim)', marginLeft: '12px' }}>
+                {currentTheme === 'light' ? '☀️' : '🌙'} {new Date().getHours().toString().padStart(2,'0')}:{new Date().getMinutes().toString().padStart(2,'0')}
               </span>
             </div>
           </div>

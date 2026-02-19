@@ -713,8 +713,17 @@ function BorusanCRM() {
 
   // 📄 PDF Upload Handler
   const handlePdfUpload = async (file) => {
-    if (!file || file.type !== 'application/pdf') {
-      alert('⚠️ Sadece PDF dosyası yükleyebilirsiniz!');
+    if (!file) {
+      alert('⚠️ Dosya seçilmedi!');
+      return;
+    }
+    
+    // Dosya uzantısını kontrol et
+    const fileName = file.name.toLowerCase();
+    const isPdf = fileName.endsWith('.pdf') || file.type === 'application/pdf' || file.type === 'application/x-pdf';
+    
+    if (!isPdf) {
+      alert('⚠️ Sadece PDF dosyası yükleyebilirsiniz! (Seçilen: ' + file.type + ')');
       return;
     }
 
